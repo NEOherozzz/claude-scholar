@@ -18,6 +18,7 @@
 
 ## Recent News
 
+- **2026-04-22**: **Lightweight core instructions** — replaced the large always-on `CLAUDE.md` / `AGENTS.md` files with compact core instructions, added Chinese companion files, and kept detailed skills, commands, agents, and workflows as on-demand references to reduce default context overhead.
 - **2026-04-15**: **pubfig and pubtab introduced** — introduced [`pubfig`](https://github.com/Galaxy-Dawn/pubfig), a Python package for publication-grade scientific figures, and [`pubtab`](https://github.com/Galaxy-Dawn/pubtab), a Python package for publication-ready tables and Excel↔LaTeX workflows. Together they provide a cleaner production stack for paper figures, benchmark tables, export control, and final artifact QA.
 - **2026-04-15**: **publication-chart-skill integrated into Claude Scholar** — wrapped [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) into `publication-chart-skill`, added the skill to the repository, and connected it to Claude Scholar's analysis and writing boundaries so publication-grade figure/table work now has an explicit handoff route instead of being mixed into general analysis or prose skills.
 
@@ -98,10 +99,11 @@ The installer is **backup-aware and incremental-update friendly**:
 - merges Claude Scholar sections into an existing `~/.codex/config.toml` when you keep your current provider/model,
 - backs up `config.toml` and `auth.json` before overwriting,
 - preserves an existing `~/.codex/AGENTS.md` and installs the repo-managed version as `~/.codex/AGENTS.scholar.md`,
+- preserves an existing `~/.codex/AGENTS.zh-CN.md` and installs the repo-managed Chinese version as `~/.codex/AGENTS.zh-CN.scholar.md`,
 - preserves your existing provider/model/API key when you choose the incremental-update path,
 - optionally enables the Zotero MCP block already present in the template config.
 
-**Important AGENTS note**: if you already maintain your own `~/.codex/AGENTS.md`, review `~/.codex/AGENTS.scholar.md` after installation and manually merge the Claude Scholar sections you want into your own `AGENTS.md`. Do not assume the sidecar file is applied automatically.
+**Important AGENTS note**: if you already maintain your own `~/.codex/AGENTS.md`, review `~/.codex/AGENTS.scholar.md` and `~/.codex/AGENTS.zh-CN.scholar.md` after installation and manually merge the Claude Scholar sections you want into your own files. Do not assume the sidecar file is applied automatically.
 
 To update later:
 
@@ -128,6 +130,7 @@ cp -r /tmp/claude-scholar/skills/review-response ~/.codex/skills/
 cp -r /tmp/claude-scholar/agents/literature-reviewer ~/.codex/agents/
 cp -r /tmp/claude-scholar/agents/paper-miner ~/.codex/agents/
 cp /tmp/claude-scholar/AGENTS.md ~/.codex/AGENTS.md
+cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 ```
 
 **Post-install**: minimal/manual install does **not** auto-merge your `config.toml`; copy only the sections you need from the repository config and setup guides. If you already have your own `~/.codex/AGENTS.md`, merge the relevant sections from this repo's `AGENTS.md` into your file instead of blindly overwriting it.
@@ -141,6 +144,7 @@ git clone -b codex https://github.com/Galaxy-Dawn/claude-scholar.git /tmp/claude
 cp -r /tmp/claude-scholar/skills/<skill-name> ~/.codex/skills/
 cp -r /tmp/claude-scholar/agents/<agent-name> ~/.codex/agents/
 cp /tmp/claude-scholar/AGENTS.md ~/.codex/AGENTS.md
+cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 ```
 
 **Post-install**: selective/manual install does **not** auto-merge your `config.toml`, and if you already have your own `~/.codex/AGENTS.md`, merge the relevant sections from this repo's `AGENTS.md` into your file instead of blindly overwriting it.
@@ -199,7 +203,7 @@ or:
 ### Practical Notes
 - Start with one concrete task, not a vague request for "everything."
 - In Codex, natural-language prompts are the default entrypoint; use `$skill-name` only when you want to force a specific skill.
-- If you already maintain your own local `AGENTS.md`, merge the Claude Scholar sections you want from `AGENTS.scholar.md` instead of assuming sidecar files apply automatically.
+- If you already maintain your own local `AGENTS.md` or `AGENTS.zh-CN.md`, merge the Claude Scholar sections you want from `AGENTS.scholar.md` or `AGENTS.zh-CN.scholar.md` instead of assuming sidecar files apply automatically.
 - Zotero and Obsidian are optional, but they become much more useful when you want durable literature notes or project memory rather than one-off chat output.
 
 ## Platform Scope
@@ -469,7 +473,8 @@ Claude Scholar also includes a self-improvement loop for its own skills.
 
 - [MCP_SETUP.md](./MCP_SETUP.md) — Zotero MCP setup for Codex
 - [OBSIDIAN_SETUP.md](./OBSIDIAN_SETUP.md) — Obsidian project knowledge base workflow
-- [AGENTS.md](./AGENTS.md) — Codex session rules, safety discipline, and workflow instructions
+- [AGENTS.md](./AGENTS.md) — lightweight Codex core instructions
+- [AGENTS.zh-CN.md](./AGENTS.zh-CN.md) — Chinese companion for the lightweight core instructions
 - [README.ja-JP.md](./README.ja-JP.md) — Japanese version of this README
 - [config.toml](./config.toml) — template Codex configuration with skills, agents, and MCP blocks
 
@@ -482,7 +487,7 @@ Claude Scholar for Codex includes rules around:
 - experiment reproducibility,
 - and Codex-specific session discipline.
 
-These rules live primarily in `AGENTS.md` and the repo-managed skills.
+The always-on rules live primarily in `AGENTS.md`; detailed workflows remain in repo-managed skills and docs.
 
 ## Contributing
 

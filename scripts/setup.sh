@@ -11,6 +11,7 @@ CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SRC_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 AGENTS_MD_SIDECAR="AGENTS.scholar.md"
+AGENTS_ZH_MD_SIDECAR="AGENTS.zh-CN.scholar.md"
 BACKUP_ROOT="$CODEX_HOME/.codex-scholar-backups"
 BACKUP_STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP_DIR="$BACKUP_ROOT/$BACKUP_STAMP"
@@ -132,6 +133,21 @@ install_agents_md() {
     warn "Preserving existing AGENTS.md"
     copy_file_safely "$src_file" "$sidecar_file"
     info "Installed repository AGENTS.md as $AGENTS_MD_SIDECAR"
+    return 0
+  fi
+
+  copy_file_safely "$src_file" "$target_file"
+}
+
+install_agents_zh_md() {
+  local src_file="$1"
+  local target_file="$CODEX_HOME/AGENTS.zh-CN.md"
+  local sidecar_file="$CODEX_HOME/$AGENTS_ZH_MD_SIDECAR"
+
+  if [ -f "$target_file" ]; then
+    warn "Preserving existing AGENTS.zh-CN.md"
+    copy_file_safely "$src_file" "$sidecar_file"
+    info "Installed repository AGENTS.zh-CN.md as $AGENTS_ZH_MD_SIDECAR"
     return 0
   fi
 
@@ -475,6 +491,9 @@ copy_components() {
   fi
   if [ -f "$SRC_DIR/AGENTS.md" ]; then
     install_agents_md "$SRC_DIR/AGENTS.md"
+  fi
+  if [ -f "$SRC_DIR/AGENTS.zh-CN.md" ]; then
+    install_agents_zh_md "$SRC_DIR/AGENTS.zh-CN.md"
   fi
   if [ -d "$SRC_DIR/scripts" ]; then
     copy_dir_safely "$SRC_DIR/scripts" "$CODEX_HOME/scripts"

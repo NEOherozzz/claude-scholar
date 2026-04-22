@@ -18,6 +18,7 @@
 
 ## 最新动态
 
+- **2026-04-22**: **精简常驻核心指令** — 将大型 always-on `CLAUDE.md` / `AGENTS.md` 改为紧凑的核心指令，新增中文 companion 文件，并把详细 skills、commands、agents 与 workflow 内容保留为按需参考，以降低默认 context 开销。
 - **2026-04-15**: **提出 pubfig 与 pubtab 两个 Python package** — 推出了 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig)（用于论文级 scientific figures）和 [`pubtab`](https://github.com/Galaxy-Dawn/pubtab)（用于 publication-ready tables 与 Excel↔LaTeX workflows）两个独立 Python package，为研究者提供更清晰的论文图、benchmark 表、导出控制与最终 QA 生产路径。
 - **2026-04-15**: **将 publication-chart-skill 融入 Claude Scholar** — 把 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) 封装成 `publication-chart-skill`，加入仓库，并接到 Claude Scholar 的分析/写作边界里，让论文级图表工作有了明确的 handoff 路径，而不是继续混在通用分析或 prose skill 里。
 
@@ -98,10 +99,11 @@ bash /tmp/claude-scholar/scripts/setup.sh
 - 当你选择保留现有 provider/model 时，把 Claude Scholar 所需 section 合并进现有 `~/.codex/config.toml`
 - 覆盖前自动备份 `config.toml` 与 `auth.json`
 - 如果已存在 `~/.codex/AGENTS.md`，则保留原文件，并把仓库版本另存为 `~/.codex/AGENTS.scholar.md`
+- 如果已存在 `~/.codex/AGENTS.zh-CN.md`，则保留原文件，并把仓库中文版本另存为 `~/.codex/AGENTS.zh-CN.scholar.md`
 - 在增量更新路径下保留现有 provider / model / API key
 - 可选启用模板中已经存在的 Zotero MCP 配置块
 
-**重要 AGENTS 说明**：如果你原来就有自己的 `~/.codex/AGENTS.md`，安装后请查看 `~/.codex/AGENTS.scholar.md`，并将其中你需要的 Claude Scholar 内容按需 merge 到你自己的 `AGENTS.md` 里；不要假设这个 sidecar 文件会自动生效。
+**重要 AGENTS 说明**：如果你原来就有自己的 `~/.codex/AGENTS.md`，安装后请查看 `~/.codex/AGENTS.scholar.md` 和 `~/.codex/AGENTS.zh-CN.scholar.md`，并将其中你需要的 Claude Scholar 内容按需 merge 到你自己的文件里；不要假设这个 sidecar 文件会自动生效。
 
 以后做增量更新时：
 
@@ -128,6 +130,7 @@ cp -r /tmp/claude-scholar/skills/review-response ~/.codex/skills/
 cp -r /tmp/claude-scholar/agents/literature-reviewer ~/.codex/agents/
 cp -r /tmp/claude-scholar/agents/paper-miner ~/.codex/agents/
 cp /tmp/claude-scholar/AGENTS.md ~/.codex/AGENTS.md
+cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 ```
 
 **安装后**：最小化/手动安装**不会自动合并** `config.toml`；请根据需要手动复制仓库配置与 setup 文档里的相关 section。如果你已经有自己的 `~/.codex/AGENTS.md`，也请把仓库 `AGENTS.md` 中相关内容按需 merge 到你的文件里，而不是直接覆盖。
@@ -141,6 +144,7 @@ git clone -b codex https://github.com/Galaxy-Dawn/claude-scholar.git /tmp/claude
 cp -r /tmp/claude-scholar/skills/<skill-name> ~/.codex/skills/
 cp -r /tmp/claude-scholar/agents/<agent-name> ~/.codex/agents/
 cp /tmp/claude-scholar/AGENTS.md ~/.codex/AGENTS.md
+cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 ```
 
 **安装后**：选择性/手动安装不仅不会自动合并 `config.toml`，如果你已经有自己的 `~/.codex/AGENTS.md`，也请把仓库 `AGENTS.md` 中相关内容按需 merge 到你的文件里，而不是直接覆盖。
@@ -199,7 +203,7 @@ cp /tmp/claude-scholar/AGENTS.md ~/.codex/AGENTS.md
 ### 使用建议
 - 先从一个具体任务开始，而不是一上来让系统“把所有事情都做了”。
 - 在 Codex 里，自然语言是默认入口；只有当你想强制调用某个 skill 时，才需要显式写 `$skill-name`。
-- 如果你已经有自己的本地 `AGENTS.md` 文件，请把你需要的 Claude Scholar 内容从 `AGENTS.scholar.md` 里按需 merge 进去，不要假设 sidecar 文件会自动生效。
+- 如果你已经有自己的本地 `AGENTS.md` 或 `AGENTS.zh-CN.md` 文件，请把你需要的 Claude Scholar 内容从 `AGENTS.scholar.md` 或 `AGENTS.zh-CN.scholar.md` 里按需 merge 进去，不要假设 sidecar 文件会自动生效。
 - Zotero 和 Obsidian 都不是强制的，但如果你希望得到 durable literature notes 或 project memory，而不是一次性聊天输出，它们会非常有帮助。
 
 ## 平台范围
@@ -444,7 +448,8 @@ Claude Scholar 也包含一套自我改进的 skill 工作流。
 
 - [MCP_SETUP.zh-CN.md](./MCP_SETUP.zh-CN.md) — Codex 版 Zotero MCP 配置说明
 - [OBSIDIAN_SETUP.zh-CN.md](./OBSIDIAN_SETUP.zh-CN.md) — Obsidian 项目知识库工作流
-- [AGENTS.md](./AGENTS.md) — Codex 会话规则、安全约束与工作流说明
+- [AGENTS.md](./AGENTS.md) — 轻量版 Codex 核心指令
+- [AGENTS.zh-CN.md](./AGENTS.zh-CN.md) — 轻量核心指令的中文 companion 文件
 - [README.ja-JP.md](./README.ja-JP.md) — 本 README 的日文版
 - [config.toml](./config.toml) — 包含 skills、agents 与 MCP 配置块的 Codex 模板配置
 
@@ -457,7 +462,7 @@ Claude Scholar 的 Codex 版包含以下规则：
 - 实验可复现性
 - Codex 专用会话约束
 
-这些规则主要体现在 `AGENTS.md` 与仓库附带的 skills 中。
+常驻规则主要体现在 `AGENTS.md`；详细工作流保留在仓库附带的 skills 和文档中。
 
 ## 贡献
 
