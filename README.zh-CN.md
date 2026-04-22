@@ -18,6 +18,7 @@
 
 ## 最新动态
 
+- **2026-04-22**: **精简常驻核心指令** — 将大型 always-on `CLAUDE.md` / `AGENTS.md` 改为紧凑的核心指令，新增中文 companion 文件，并把详细 skills、commands、agents 与 workflow 内容保留为按需参考，以降低默认 context 开销。
 - **2026-04-15**: **提出 pubfig 与 pubtab 两个 Python package** — 推出了 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig)（用于论文级 scientific figures）和 [`pubtab`](https://github.com/Galaxy-Dawn/pubtab)（用于 publication-ready tables 与 Excel↔LaTeX workflows）两个独立 Python package，为研究者提供更清晰的论文图、benchmark 表、导出控制与最终 QA 生产路径。
 - **2026-04-15**: **将 publication-chart-skill 融入 Claude Scholar** — 把 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) 封装成 `publication-chart-skill`，加入仓库，并接到 Claude Scholar 的分析/写作边界里，让论文级图表工作有了明确的 handoff 路径，而不是继续混在通用分析或 prose skill 里。
 
@@ -97,10 +98,11 @@ bash /tmp/claude-scholar/scripts/setup.sh
 - 将被覆盖的文件备份到 `~/.opencode/.claude-scholar-backups/<timestamp>/`
 - 同时把 `opencode.jsonc` 备份为 `opencode.jsonc.bak`
 - 如果已存在 `~/.opencode/AGENTS.md`，则保留原文件，并把仓库版本另存为 `~/.opencode/AGENTS.scholar.md`
+- 如果已存在 `~/.opencode/AGENTS.zh-CN.md`，则保留原文件，并把仓库中文版本另存为 `~/.opencode/AGENTS.zh-CN.scholar.md`
 - 保留已有的 `env`、模型/provider 配置、API key、permissions、auth，以及当前 `mcp` 的现有取值
 - 对仓库托管的 `agent/mcp/permission/plugin` 条目采用追加缺失项的方式，而不是整体替换
 
-**重要 AGENTS 说明**：如果你原来就有自己的 `~/.opencode/AGENTS.md`，安装后请查看 `~/.opencode/AGENTS.scholar.md`，并将其中你需要的 Claude Scholar 内容按需 merge 到你自己的 `AGENTS.md` 里；不要假设这个 sidecar 文件会自动生效。
+**重要 AGENTS 说明**：如果你原来就有自己的 `~/.opencode/AGENTS.md`，安装后请查看 `~/.opencode/AGENTS.scholar.md` 和 `~/.opencode/AGENTS.zh-CN.scholar.md`，并将其中你需要的 Claude Scholar 内容按需 merge 到你自己的文件里；不要假设这个 sidecar 文件会自动生效。
 
 以后做增量更新时：
 
@@ -145,6 +147,7 @@ cp plugins/*.ts ~/.opencode/plugins/
 cp -r skills/latex-conference-template-organizer ~/.opencode/skills/
 cp -r skills/architecture-design ~/.opencode/skills/
 cp AGENTS.md ~/.opencode/AGENTS.md
+cp AGENTS.zh-CN.md ~/.opencode/AGENTS.zh-CN.md
 ```
 
 **安装后**：选择性/手动安装**不会自动合并** `opencode.jsonc`；请按需从 `opencode.jsonc` 复制你真正需要的 plugin 或 MCP 条目。如果你已经有自己的 `~/.opencode/AGENTS.md`，也请把仓库 `AGENTS.md` 中相关内容按需 merge 到你的文件里，而不是直接覆盖。
@@ -198,7 +201,7 @@ cp AGENTS.md ~/.opencode/AGENTS.md
 
 ### 使用建议
 - 先从一个具体任务开始，而不是一上来让系统“把所有事情都做了”。
-- 如果你已经有自己的本地 `AGENTS.md` 文件，请把你需要的 Claude Scholar 内容从 `AGENTS.scholar.md` 里按需 merge 进去，不要假设 sidecar 文件会自动生效。
+- 如果你已经有自己的本地 `AGENTS.md` 或 `AGENTS.zh-CN.md` 文件，请把你需要的 Claude Scholar 内容从 `AGENTS.scholar.md` 或 `AGENTS.zh-CN.scholar.md` 里按需 merge 进去，不要假设 sidecar 文件会自动生效。
 - Zotero 和 Obsidian 都不是强制的，但如果你希望得到 durable literature notes 或 project memory，而不是一次性聊天输出，它们会非常有帮助。
 
 ## 平台支持
@@ -475,7 +478,8 @@ Claude Scholar 也内置了自我改进的 skill 工作流。
 
 - [MCP_SETUP.zh-CN.md](./MCP_SETUP.zh-CN.md) — Zotero / 浏览器 MCP 配置
 - [OBSIDIAN_SETUP.zh-CN.md](./OBSIDIAN_SETUP.zh-CN.md) — Obsidian 项目知识库工作流
-- [AGENTS.md](./AGENTS.md) — OpenCode 分支的完整本地配置、技能列表与工作流说明
+- [AGENTS.md](./AGENTS.md) — 轻量版 OpenCode 核心指令
+- [AGENTS.zh-CN.md](./AGENTS.zh-CN.md) — 轻量核心指令的中文 companion 文件
 - [README.md](./README.md) — 英文版 README
 - [README.ja-JP.md](./README.ja-JP.md) — 日文版 README
 - [opencode.jsonc](./opencode.jsonc) — plugin / MCP / agent / permission 的可选配置模板
@@ -487,7 +491,7 @@ Claude Scholar 包含以下方面的项目规则：
 - 安全约束
 - 实验可复现性
 
-这些规则体现在仓库附带的配置以及 `AGENTS.md` 中。
+常驻规则主要体现在 `AGENTS.md`；详细工作流保留在仓库附带的 skills 和文档中。
 
 ## 贡献
 

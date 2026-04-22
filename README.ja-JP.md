@@ -18,6 +18,7 @@
 
 ## 最新ニュース
 
+- **2026-04-22**: **軽量なコア指示へ更新** — 大きな always-on `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、中国語 companion ファイルを追加し、詳細な skills、commands、agents、workflow は必要時に読む参照として残しました。これによりデフォルトの context コストを抑えます。
 - **2026-04-15**: **pubfig と pubtab という 2 つの Python package を導入** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) を論文品質の scientific figures 向け Python package、[`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を publication-ready な tables と Excel↔LaTeX workflows 向け Python package として打ち出し、論文図、benchmark 表、書き出し制御、最終 QA までの生産経路をより明確にしました。
 - **2026-04-15**: **publication-chart-skill を Claude Scholar に統合** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を `publication-chart-skill` としてまとめてリポジトリに追加し、Claude Scholar の分析/執筆スタックの boundary に接続しました。これにより、論文品質の図表作業を汎用分析や prose skill に混ぜず、明示的な handoff で扱えるようになりました。
 
@@ -97,10 +98,11 @@ bash /tmp/claude-scholar/scripts/setup.sh
 - 上書き対象ファイルを `~/.opencode/.claude-scholar-backups/<timestamp>/` にバックアップ
 - `opencode.jsonc` も `opencode.jsonc.bak` としてバックアップ
 - `~/.opencode/AGENTS.md` が既に存在する場合は元ファイルを保持し、リポジトリ版を `~/.opencode/AGENTS.scholar.md` として保存
+- `~/.opencode/AGENTS.zh-CN.md` が既に存在する場合は元ファイルを保持し、リポジトリ版の中国語 companion を `~/.opencode/AGENTS.zh-CN.scholar.md` として保存
 - 既存の `env`、モデル / provider 設定、API key、permissions、auth、および `mcp` の現在値を保持
 - リポジトリ管理の `agent/mcp/permission/plugin` 条目は、全置換ではなく不足項目を追加する形でマージ
 
-**重要な AGENTS 説明**：すでに自分用の `~/.opencode/AGENTS.md` を持っている場合は、インストール後に `~/.opencode/AGENTS.scholar.md` を確認し、必要な Claude Scholar の内容だけを自分の `AGENTS.md` に手動で merge してください。sidecar ファイルが自動で有効化されるとは考えないでください。
+**重要な AGENTS 説明**：すでに自分用の `~/.opencode/AGENTS.md` を持っている場合は、インストール後に `~/.opencode/AGENTS.scholar.md` と `~/.opencode/AGENTS.zh-CN.scholar.md` を確認し、必要な Claude Scholar の内容だけを自分のファイルに手動で merge してください。sidecar ファイルが自動で有効化されるとは考えないでください。
 
 以後の増分更新は次の通りです。
 
@@ -145,6 +147,7 @@ cp plugins/*.ts ~/.opencode/plugins/
 cp -r skills/latex-conference-template-organizer ~/.opencode/skills/
 cp -r skills/architecture-design ~/.opencode/skills/
 cp AGENTS.md ~/.opencode/AGENTS.md
+cp AGENTS.zh-CN.md ~/.opencode/AGENTS.zh-CN.md
 ```
 
 **インストール後**：選択的 / 手動インストールでも `opencode.jsonc` は自動マージされません。必要な plugin / MCP 条目だけを手動で取り込んでください。既に `~/.opencode/AGENTS.md` を持っている場合も、必要な内容だけを手動で merge してください。
@@ -198,7 +201,7 @@ cp AGENTS.md ~/.opencode/AGENTS.md
 
 ### 実用上のメモ
 - 最初は「全部やって」ではなく、具体的な一つのタスクから始めるのがおすすめです。
-- すでに自分用のローカル`AGENTS.md`を運用している場合は、`AGENTS.scholar.md`から必要な内容だけを手動でマージしてください。別名で配置されたファイルが自動適用されるわけではありません。
+- すでに自分用のローカル`AGENTS.md`または`AGENTS.zh-CN.md`を運用している場合は、`AGENTS.scholar.md`または`AGENTS.zh-CN.scholar.md`から必要な内容だけを手動でマージしてください。別名で配置されたファイルが自動適用されるわけではありません。
 - ZoteroとObsidianは必須ではありませんが、単発のチャット出力ではなく、継続的な文献ノートやプロジェクトメモリを残したい場合にはかなり有用です。
 
 ## プラットフォームサポート
@@ -476,7 +479,8 @@ Claude Scholar には self-improving な skill ワークフローも内蔵され
 
 - [MCP_SETUP.ja-JP.md](./MCP_SETUP.ja-JP.md) — Zotero / ブラウザ MCP 設定
 - [OBSIDIAN_SETUP.ja-JP.md](./OBSIDIAN_SETUP.ja-JP.md) — Obsidian プロジェクト知識ベースワークフロー
-- [AGENTS.md](./AGENTS.md) — OpenCode 分岐の完全なローカル設定、skill 一覧、ワークフロー説明
+- [AGENTS.md](./AGENTS.md) — 軽量な OpenCode コア指示
+- [AGENTS.zh-CN.md](./AGENTS.zh-CN.md) — 軽量コア指示の中国語 companion ファイル
 - [README.md](./README.md) — 英語版 README
 - [README.zh-CN.md](./README.zh-CN.md) — 中国語版 README
 - [opencode.jsonc](./opencode.jsonc) — plugin / MCP / agent / permission の任意設定テンプレート
@@ -489,7 +493,7 @@ Claude Scholar には次の領域のルールが含まれます。
 - 安全制約
 - 実験再現性
 
-これらのルールはリポジトリ付属の設定と `AGENTS.md` に反映されています。
+常時有効なルールは主に `AGENTS.md` にあり、詳細なワークフローは同梱 skills と docs に残しています。
 
 ## コントリビューション
 
