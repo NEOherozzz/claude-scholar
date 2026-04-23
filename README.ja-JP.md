@@ -15,6 +15,8 @@
 </div>
 
 > 学術研究とソフトウェア開発のための半自動リサーチアシスタントであり、特にコンピュータサイエンスと AI 研究者に適しています。[Claude Code](https://github.com/anthropics/claude-code)、[Codex CLI](https://github.com/openai/codex)、[OpenCode](https://github.com/opencode-ai/opencode) をサポートし、文献管理、コーディング、実験分析、結果レポート、執筆、プロジェクト知識ベースの保守を支援します。
+> **既定 agent に関する注記**：Claude Scholar は context 負荷を抑えるため、既定 agent を少数に絞っています。現在保留しているのは `literature-reviewer`、`paper-miner`、`rebuttal-writer`、`code-reviewer`、`kaggle-miner`、`tdd-guide` です。その他の作業は、追加の既定 agent を前提にするのではなく、skills と commands を優先してください。
+
 
 ## 最新ニュース
 
@@ -35,6 +37,22 @@
 | [支援ワークフロー](#支援ワークフロー) | 主ワークフローを支える背景メカニズムを確認する。 |
 | [ドキュメント入口](#ドキュメント入口) | setup、設定、テンプレート文書へ移動する。 |
 | [引用](#引用) | 論文・報告書・プロジェクト文書で Claude Scholar を引用する。 |
+
+## 現在保留している既定 Agent
+
+Claude Scholar がこの分岐で既定で保持している agent は以下が全てです。
+
+| 種別 | 名前 | 保持している役割 |
+|---|---|---|
+| Agent | `literature-reviewer` | 論文を検索・分類・統合し、実行可能な文献全体像を作る。 |
+| Agent | `paper-miner` | 優れた論文から再利用可能な書き方、構造シグナル、投稿知識を抽出する。 |
+| Agent | `rebuttal-writer` | 専門的で礼儀正しく、戦略的に整理された rebuttal 文面を起草する。 |
+| Agent | `code-reviewer` | 変更されたコードの正確性、保守性、実装品質をレビューする。 |
+| Agent | `kaggle-miner` | 優れた Kaggle ワークフローから実装慣行と解法パターンを抽出する。 |
+| Agent | `tdd-guide` | 明示的に TDD が必要な場面で、絞ったテスト駆動の実装ガイドを出す。 |
+
+その他の作業は skills と commands を優先し、追加の既定 agent がある前提では考えないでください。
+
 
 ## なぜ Claude Scholar なのか
 
