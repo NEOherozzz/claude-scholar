@@ -10,20 +10,6 @@ Keep human decisions at the center. Produce artifacts that the user can reuse di
 
 ---
 
-## Default Agent Set
-
-Codex Scholar keeps a small default agent set:
-- `literature-reviewer`
-- `paper-miner`
-- `rebuttal-writer`
-- `code-reviewer`
-- `kaggle-miner`
-- `tdd-guide`
-
-This is the full retained default set. Use skills and commands for most other work. Do not assume additional legacy agents are installed by default.
-
----
-
 ## Writing Discipline
 
 - Make each sentence carry one concrete point.
