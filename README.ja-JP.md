@@ -278,6 +278,7 @@ Claude Scholar は現在、次の CLI ワークフローを対象にしていま
 | Skill | `git-workflow` | ブランチ規範、commit 規範、より安全な協業フローを整える |
 | Skill | `bug-detective` | stack trace、shell エラー、コードパス問題を体系的に追跡する |
 | Agent | `code-reviewer` | コード変更の正しさ、保守性、実装品質をレビューする |
+| Agent | `tdd-guide` | 明示的に TDD が必要な場面で、絞ったテスト駆動の実装ガイドを出す。 |
 | Command | `/plan` | 実装前に計画を作成・洗練する |
 | Command | `/commit` | 現在の変更に対する規範的 commit を生成する |
 | Command | `/code-review` | 現在の変更に焦点を当てたコードレビューを行う |
