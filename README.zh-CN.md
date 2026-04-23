@@ -282,6 +282,7 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 | Skill | `git-commit` | 在本地生成符合 Conventional Commits 的提交。 |
 | Skill | `git-push` | 按 Conventional Commits 完成暂存、提交和推送。 |
 | Agent | `code-reviewer` | 审查改动代码的正确性、可维护性和实现质量。 |
+| Agent | `tdd-guide` | 当任务明确需要 TDD 路径时，提供聚焦的测试驱动实现指导。 |
 
 **工作方式**
 - **结构设计**：在合适场景下使用 Factory / Registry 模式。

@@ -282,6 +282,7 @@ Maintainable ML project development for experiment code and repo hygiene.
 | Skill | `git-commit` | Creates Conventional Commit messages locally. |
 | Skill | `git-push` | Stages, commits, and pushes using Conventional Commits. |
 | Agent | `code-reviewer` | Reviews changed code for correctness, maintainability, and implementation quality. |
+| Agent | `tdd-guide` | Provide focused test-driven implementation guidance when a TDD path is explicitly needed. |
 
 **How it works**
 - **Structure**: use Factory / Registry patterns where they actually help.

@@ -282,6 +282,7 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 | Skill | `git-commit` | Conventional Commits に沿ったコミットをローカルで作る |
 | Skill | `git-push` | Conventional Commits に沿って stage / commit / push を行う |
 | Agent | `code-reviewer` | コード変更の正しさ、保守性、実装品質をレビューする |
+| Agent | `tdd-guide` | 明示的に TDD が必要な場面で、絞ったテスト駆動の実装ガイドを出す。 |
 
 **進め方**
 - **構造設計**：適切な場面では Factory / Registry パターンを使う
