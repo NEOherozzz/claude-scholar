@@ -10,17 +10,17 @@ Keep human decisions at the center. Produce artifacts that the user can reuse di
 
 ---
 
-## Communication Defaults
+## Default Agent Set
 
-- Respond in English by default.
-- Use Chinese only when the user asks for it or clearly prefers it.
-- Keep technical terms precise and standard.
-- Prefer this answer order:
-  1. direct answer or executable path,
-  2. evidence or verification,
-  3. limits, assumptions, or next steps.
-- Be concise. Do not add background unless it changes the answer.
-- Avoid vague phrases and internal slang. Use plain language.
+Codex Scholar keeps a small default agent set:
+- `literature-reviewer`
+- `paper-miner`
+- `rebuttal-writer`
+- `code-reviewer`
+- `kaggle-miner`
+- `tdd-guide`
+
+This is the full retained default set. Use skills and commands for most other work. Do not assume additional legacy agents are installed by default.
 
 ---
 
