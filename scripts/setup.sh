@@ -13,12 +13,21 @@ SRC_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 AGENTS_MD_SIDECAR="AGENTS.scholar.md"
 AGENTS_ZH_MD_SIDECAR="AGENTS.zh-CN.scholar.md"
 BACKUP_ROOT="$CODEX_HOME/.codex-scholar-backups"
+MANIFEST_FILE="$CODEX_HOME/.codex-scholar-manifest.txt"
+STATE_FILE="$CODEX_HOME/.codex-scholar-install-state"
+PREVIOUS_MANAGED_PATHS_FILE="$(mktemp)"
 BACKUP_STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP_DIR="$BACKUP_ROOT/$BACKUP_STAMP"
 BACKUP_READY=0
 BACKUP_COUNT=0
 UPDATED_COUNT=0
 SKIPPED_COUNT=0
+CONFIG_CREATED=0
+CONFIG_SHA256=""
+MANAGED_PATHS=()
+AGENTS_TARGETS=()
+CONFIG_META_FILE="$(mktemp)"
+LEGACY_INSTALL_DETECTED=0
 
 # --- State flags ---
 SKIP_PROVIDER=false
@@ -39,11 +48,141 @@ info()   { echo -e "\033[1;34m[INFO]\033[0m $*"; }
 warn()   { echo -e "\033[1;33m[WARN]\033[0m $*"; }
 error()  { echo -e "\033[1;31m[ERROR]\033[0m $*"; exit 1; }
 
+cleanup_temp_files() {
+  rm -f "$CONFIG_META_FILE" "$PREVIOUS_MANAGED_PATHS_FILE"
+}
+
+trap cleanup_temp_files EXIT
+
 # --- Presets ---
 declare -a PRESET_NAMES=("openai" "custom")
 declare -a PRESET_LABELS=("OpenAI (official)" "Custom provider")
 declare -a PRESET_URLS=("https://api.openai.com/v1" "")
 declare -a PRESET_MODELS=("gpt-5.4" "")
+
+load_previous_manifest() {
+  if [ -f "$MANIFEST_FILE" ]; then
+    cp "$MANIFEST_FILE" "$PREVIOUS_MANAGED_PATHS_FILE"
+  else
+    : > "$PREVIOUS_MANAGED_PATHS_FILE"
+  fi
+}
+
+detect_legacy_install() {
+  local config="$CODEX_HOME/config.toml"
+  [ -f "$MANIFEST_FILE" ] && return 0
+  [ -f "$config" ] || return 0
+
+  if grep -q 'config_file = "~/.codex/agents/' "$config" 2>/dev/null; then
+    LEGACY_INSTALL_DETECTED=1
+  fi
+}
+
+record_managed_path() {
+  local target="$1"
+  local rel="${target#$CODEX_HOME/}"
+  [ "$rel" = "$target" ] && return 0
+  [ -z "$rel" ] && return 0
+  MANAGED_PATHS+=("$rel")
+}
+
+record_agents_target() {
+  local target="$1"
+  local rel="${target#$CODEX_HOME/}"
+  [ "$rel" = "$target" ] && return 0
+  [ -z "$rel" ] && return 0
+  AGENTS_TARGETS+=("$rel")
+}
+
+was_previously_managed() {
+  local target="$1"
+  local rel="${target#$CODEX_HOME/}"
+  [ "$rel" = "$target" ] && return 1
+  grep -Fxq "$rel" "$PREVIOUS_MANAGED_PATHS_FILE"
+}
+
+should_adopt_existing_path() {
+  local target="$1"
+  if was_previously_managed "$target"; then
+    return 0
+  fi
+  [ "$LEGACY_INSTALL_DETECTED" -eq 1 ]
+}
+
+file_sha256() {
+  local target="$1"
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "$target" | awk '{print $1}'
+  elif command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$target" | awk '{print $1}'
+  else
+    printf ''
+  fi
+}
+
+write_install_state() {
+  mkdir -p "$CODEX_HOME"
+  if [ "${#MANAGED_PATHS[@]}" -gt 0 ]; then
+    printf "%s\n" "${MANAGED_PATHS[@]}" | LC_ALL=C sort -u > "$MANIFEST_FILE"
+  else
+    : > "$MANIFEST_FILE"
+  fi
+
+  local managed_paths_file agents_targets_file
+  managed_paths_file="$(mktemp)"
+  agents_targets_file="$(mktemp)"
+
+  if [ "${#MANAGED_PATHS[@]}" -gt 0 ]; then
+    printf "%s\n" "${MANAGED_PATHS[@]}" | LC_ALL=C sort -u > "$managed_paths_file"
+  else
+    : > "$managed_paths_file"
+  fi
+
+  if [ "${#AGENTS_TARGETS[@]}" -gt 0 ]; then
+    printf "%s\n" "${AGENTS_TARGETS[@]}" | LC_ALL=C sort -u > "$agents_targets_file"
+  else
+    : > "$agents_targets_file"
+  fi
+
+  CODEX_STATE_FILE="$STATE_FILE" \
+  CODEX_CONFIG_META_FILE="$CONFIG_META_FILE" \
+  CODEX_MANAGED_PATHS_FILE="$managed_paths_file" \
+  CODEX_AGENTS_TARGETS_FILE="$agents_targets_file" \
+  CODEX_INSTALLED_AT="$BACKUP_STAMP" \
+  CODEX_SOURCE_DIR="$SRC_DIR" \
+  CODEX_CONFIG_CREATED="$CONFIG_CREATED" \
+  CODEX_CONFIG_SHA256="$CONFIG_SHA256" \
+  CODEX_BACKUP_DIR="$BACKUP_DIR" \
+  CODEX_BACKUP_READY="$BACKUP_READY" \
+  node <<'NODE'
+const fs = require('fs');
+
+function readLines(path) {
+  if (!path || !fs.existsSync(path)) return [];
+  return fs.readFileSync(path, 'utf8').split('\n').map((line) => line.trim()).filter(Boolean);
+}
+
+function readJson(path) {
+  if (!path || !fs.existsSync(path)) return {};
+  return JSON.parse(fs.readFileSync(path, 'utf8'));
+}
+
+const state = {
+  installedAt: process.env.CODEX_INSTALLED_AT,
+  sourceDir: process.env.CODEX_SOURCE_DIR,
+  configCreated: process.env.CODEX_CONFIG_CREATED === '1',
+  configSha256: process.env.CODEX_CONFIG_SHA256 || '',
+  backupDir: process.env.CODEX_BACKUP_READY === '1' ? process.env.CODEX_BACKUP_DIR : '',
+  managedPaths: readLines(process.env.CODEX_MANAGED_PATHS_FILE),
+  agentsTargets: readLines(process.env.CODEX_AGENTS_TARGETS_FILE),
+  config: readJson(process.env.CODEX_CONFIG_META_FILE),
+};
+
+fs.writeFileSync(process.env.CODEX_STATE_FILE, JSON.stringify(state, null, 2) + '\n');
+NODE
+
+  rm -f "$managed_paths_file" "$agents_targets_file"
+}
 
 ensure_backup_dir() {
   if [ "$BACKUP_READY" -eq 0 ]; then
@@ -93,6 +232,9 @@ copy_file_safely() {
   ensure_parent_dir "$target_file"
 
   if [ -f "$target_file" ] && cmp -s "$src_file" "$target_file"; then
+    if should_adopt_existing_path "$target_file"; then
+      record_managed_path "$target_file"
+    fi
     SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
     return 0
   fi
@@ -103,6 +245,7 @@ copy_file_safely() {
   fi
 
   cp -p "$src_file" "$target_file"
+  record_managed_path "$target_file"
   UPDATED_COUNT=$((UPDATED_COUNT + 1))
 }
 
@@ -129,14 +272,22 @@ install_agents_md() {
   local target_file="$CODEX_HOME/AGENTS.md"
   local sidecar_file="$CODEX_HOME/$AGENTS_MD_SIDECAR"
 
+  if [ -f "$target_file" ] && should_adopt_existing_path "$target_file"; then
+    copy_file_safely "$src_file" "$target_file"
+    record_agents_target "$target_file"
+    return 0
+  fi
+
   if [ -f "$target_file" ]; then
     warn "Preserving existing AGENTS.md"
     copy_file_safely "$src_file" "$sidecar_file"
+    record_agents_target "$sidecar_file"
     info "Installed repository AGENTS.md as $AGENTS_MD_SIDECAR"
     return 0
   fi
 
   copy_file_safely "$src_file" "$target_file"
+  record_agents_target "$target_file"
 }
 
 install_agents_zh_md() {
@@ -144,14 +295,22 @@ install_agents_zh_md() {
   local target_file="$CODEX_HOME/AGENTS.zh-CN.md"
   local sidecar_file="$CODEX_HOME/$AGENTS_ZH_MD_SIDECAR"
 
+  if [ -f "$target_file" ] && should_adopt_existing_path "$target_file"; then
+    copy_file_safely "$src_file" "$target_file"
+    record_agents_target "$target_file"
+    return 0
+  fi
+
   if [ -f "$target_file" ]; then
     warn "Preserving existing AGENTS.zh-CN.md"
     copy_file_safely "$src_file" "$sidecar_file"
+    record_agents_target "$sidecar_file"
     info "Installed repository AGENTS.zh-CN.md as $AGENTS_ZH_MD_SIDECAR"
     return 0
   fi
 
   copy_file_safely "$src_file" "$target_file"
+  record_agents_target "$target_file"
 }
 
 # --- Auth/provider helpers ---
@@ -371,6 +530,21 @@ generate_fresh_config() {
       -e "s|__PROVIDER_NAME__|$PROVIDER_NAME|g" \
       -e "s|__PROVIDER_URL__|$PROVIDER_URL|g" \
       "$template" > "$target"
+  CONFIG_CREATED=1
+  CONFIG_SHA256="$(file_sha256 "$target")"
+  CODEX_CONFIG_TEMPLATE="$target" CODEX_CONFIG_META_FILE="$CONFIG_META_FILE" python3 <<'PY'
+import pathlib
+import re
+import json
+import os
+
+text = pathlib.Path(os.environ["CODEX_CONFIG_TEMPLATE"]).read_text()
+sections = re.findall(r"^\[([^\]]+)\]", text, flags=re.M)
+pathlib.Path(os.environ["CODEX_CONFIG_META_FILE"]).write_text(json.dumps({
+    "configCreated": True,
+    "addedSections": sections,
+}, indent=2) + "\n")
+PY
   info "Generated config.toml (model=$MODEL, provider=$PROVIDER_NAME)"
 }
 
@@ -378,7 +552,7 @@ merge_scholar_config() {
   local target="$1"
   local template="$2"
 
-  TARGET_PATH="$target" TEMPLATE_PATH="$template" python3 <<'PY'
+TARGET_PATH="$target" TEMPLATE_PATH="$template" python3 <<'PY'
 import os
 import pathlib
 import re
@@ -438,6 +612,18 @@ generate_config() {
   if [ "$SKIP_PROVIDER" = true ]; then
     local added
     added=$(merge_scholar_config "$target" "$template")
+    ADDED_CONFIG_SECTIONS="$added" CODEX_CONFIG_META_FILE="$CONFIG_META_FILE" python3 <<'PY'
+import json
+import os
+import pathlib
+
+sections = [item for item in os.environ.get("ADDED_CONFIG_SECTIONS", "").split(",") if item]
+pathlib.Path(os.environ["CODEX_CONFIG_META_FILE"]).write_text(json.dumps({
+    "configCreated": False,
+    "addedSections": sections,
+}, indent=2) + "\n")
+PY
+    CONFIG_SHA256="$(file_sha256 "$target")"
     if [ -n "$added" ]; then
       info "Merged Scholar sections into existing config.toml: $added"
     else
@@ -542,6 +728,8 @@ main() {
   echo ""
 
   check_deps
+  load_previous_manifest
+  detect_legacy_install
 
   info "Source: $SRC_DIR"
   info "Target: $CODEX_HOME"
@@ -554,10 +742,12 @@ main() {
   write_auth
   copy_components
   configure_mcp
+  write_install_state
 
   echo ""
   echo "============================================================"
   info "Installation complete!"
+  info "Install manifest: $MANIFEST_FILE"
   info "Updated files: $UPDATED_COUNT | Unchanged files skipped: $SKIPPED_COUNT | Backups created: $BACKUP_COUNT"
   if [ "$BACKUP_READY" -eq 1 ]; then
     info "Recover previous files from: $BACKUP_DIR"

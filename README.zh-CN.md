@@ -114,6 +114,19 @@ git pull --ff-only
 bash scripts/setup.sh
 ```
 
+以后如果要卸载：
+
+```bash
+cd /tmp/claude-scholar
+bash scripts/uninstall.sh
+```
+
+安装器会写入：
+- `~/.codex/.codex-scholar-manifest.txt`：记录 Codex Scholar 实际管理的文件
+- `~/.codex/.codex-scholar-install-state`：记录安全卸载所需的元数据，包括实际安装的 `AGENTS*.md` 目标和新增的 `config.toml` sections
+
+卸载脚本只会删除 install state 中明确记录的文件和 config sections，不会根据当前 repo 工作树猜测所有权。
+
 **Windows**：请使用 Git Bash / WSL 运行安装脚本。
 
 ### 选项 2：最小化安装

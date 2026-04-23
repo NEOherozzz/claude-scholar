@@ -114,6 +114,19 @@ git pull --ff-only
 bash scripts/setup.sh
 ```
 
+アンインストールする場合:
+
+```bash
+cd /tmp/claude-scholar
+bash scripts/uninstall.sh
+```
+
+インストーラーは次のファイルも書き込みます:
+- `~/.codex/.codex-scholar-manifest.txt`: Codex Scholar が実際に管理するファイル一覧
+- `~/.codex/.codex-scholar-install-state`: 安全なアンインストールに使うメタデータ。実際にインストールされた `AGENTS*.md` の対象と、追加された `config.toml` sections を含みます
+
+アンインストーラーは install state に記録されたファイルと config sections だけを削除し、現在のリポジトリ内容から所有権を推測しません。
+
 **Windows**：インストーラーは Git Bash / WSL から実行してください。
 
 ### オプション 2：最小インストール

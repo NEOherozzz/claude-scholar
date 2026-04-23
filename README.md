@@ -114,6 +114,19 @@ git pull --ff-only
 bash scripts/setup.sh
 ```
 
+To uninstall later:
+
+```bash
+cd /tmp/claude-scholar
+bash scripts/uninstall.sh
+```
+
+The installer writes:
+- `~/.codex/.codex-scholar-manifest.txt` for files managed by Codex Scholar
+- `~/.codex/.codex-scholar-install-state` for safe uninstall metadata, including installed `AGENTS*.md` targets and added `config.toml` sections
+
+The uninstaller removes only files and config sections recorded in that install state. It does not guess ownership from the current repo checkout.
+
 **Windows**: please use Git Bash or WSL to run the installer.
 
 ### Option 2: Minimal Installation
