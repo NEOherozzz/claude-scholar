@@ -14,7 +14,9 @@
   <strong>Language</strong>: <a href="README.md">English</a> | <a href="README.zh-CN.md">中文</a> | <a href="README.ja-JP.md">日本語</a>
 </div>
 
-> 学術研究とソフトウェア開発のための半自動リサーチアシスタントであり、特にコンピュータサイエンスと AI 研究者に適しています。[Claude Code](https://github.com/anthropics/claude-code)、[Codex CLI](https://github.com/openai/codex)、[OpenCode](https://github.com/opencode-ai/opencode) をサポートし、文献管理、コーディング、実験分析、結果レポート、執筆、プロジェクト知識ベースの保守を支援します。
+> 学術研究とソフトウェア開発のための半自動リサーチアシスタントであり、特にコンピュータサイエンスと AI 研究者に適しており、[OpenCode](https://github.com/opencode-ai/opencode) 向けに調整されています。研究構想、文献整理、実験分析、結果レポート、執筆、プロジェクト知識ベース管理を支援します。
+>
+> **ブランチ注記**：これは Claude Scholar の **OpenCode 版**です。Claude Code 版は [`main` ブランチ](https://github.com/Galaxy-Dawn/claude-scholar/tree/main)、Codex CLI 版は [`codex` ブランチ](https://github.com/Galaxy-Dawn/claude-scholar/tree/codex) を参照してください。
 
 
 ## 最新ニュース

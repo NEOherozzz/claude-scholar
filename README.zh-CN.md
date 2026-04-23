@@ -14,7 +14,9 @@
   <strong>语言</strong>: <a href="README.md">English</a> | <a href="README.zh-CN.md">中文</a> | <a href="README.ja-JP.md">日本語</a>
 </div>
 
-> 面向学术研究和软件开发的半自动研究助手，尤其适合计算机科学与 AI 研究者。支持 [Claude Code](https://github.com/anthropics/claude-code)、[Codex CLI](https://github.com/openai/codex) 和 [OpenCode](https://github.com/opencode-ai/opencode)，覆盖文献管理、编码、实验分析、结果报告、写作与项目知识库维护。
+> 面向学术研究和软件开发的半自动研究助手，尤其适合计算机科学与 AI 研究者，并针对 [OpenCode](https://github.com/opencode-ai/opencode) 做了适配，覆盖研究构思、文献整理、实验分析、结果报告、写作与项目知识库维护。
+>
+> **分支说明**：当前是 Claude Scholar 的 **OpenCode 版本**。如果你使用 Claude Code，请查看 [`main` 分支](https://github.com/Galaxy-Dawn/claude-scholar/tree/main)；如果你使用 Codex CLI，请查看 [`codex` 分支](https://github.com/Galaxy-Dawn/claude-scholar/tree/codex)。
 
 
 ## 最新动态
