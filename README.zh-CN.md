@@ -281,7 +281,6 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 | Skill | `git-commit` | 在本地生成符合 Conventional Commits 的提交。 |
 | Skill | `git-push` | 按 Conventional Commits 完成暂存、提交和推送。 |
 | Agent | `code-reviewer` | 审查改动代码的正确性、可维护性和实现质量。 |
-| Agent | `dev-planner` | 把复杂工程任务拆成可执行的实现步骤。 |
 
 **工作方式**
 - **结构设计**：在合适场景下使用 Factory / Registry 模式。
@@ -297,7 +296,6 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 |---|---|---|
 | Skill | `results-analysis` | 生成严格统计、真实科研图和分析附录。 |
 | Skill | `results-report` | 把分析产物组织成完整实验后总结报告，明确结论、限制和下一步动作。 |
-| Agent | `research-knowledge-curator-obsidian` | 在 repo 已绑定时，把稳定结论写回 Obsidian 项目知识库。 |
 
 **工作方式**
 - **数据处理**：读取实验日志、metrics 文件和结果目录。
@@ -368,7 +366,6 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 | 类型 | 名字 | 一句话解释 |
 |---|---|---|
 | Skill | `post-acceptance` | 支持论文录用后的 slides、海报和对外传播材料准备。 |
-| Agent | `ui-sketcher` | 在需要时帮助组织 slides、海报与展示流程等视觉材料。 |
 
 **工作方式**
 - **报告准备**：准备 talk 结构和演示文稿指导。

@@ -51,10 +51,6 @@ UNSAFE_OPERATIONS = "all"
 description = "Literature search, classification, and trend analysis with Zotero MCP integration"
 config_file = "~/.codex/agents/literature-reviewer/config.toml"
 
-[agents.literature-reviewer-obsidian]
-description = "Obsidian literature review specialist for project-linked paper notes and synthesis"
-config_file = "~/.codex/agents/literature-reviewer-obsidian/config.toml"
-
 [agents.rebuttal-writer]
 description = "Systematic rebuttal writing with tone optimization"
 config_file = "~/.codex/agents/rebuttal-writer/config.toml"
@@ -67,46 +63,12 @@ config_file = "~/.codex/agents/paper-miner/config.toml"
 description = "Extract engineering practices from Kaggle solutions"
 config_file = "~/.codex/agents/kaggle-miner/config.toml"
 
-[agents.research-knowledge-curator-obsidian]
-description = "Default Obsidian knowledge curator for bound research repositories"
-config_file = "~/.codex/agents/research-knowledge-curator-obsidian/config.toml"
-
 # --- Development Workflow ---
-
-[agents.architect]
-description = "ML project architecture specialist for code structure and design patterns"
-config_file = "~/.codex/agents/architect/config.toml"
-
-[agents.bug-analyzer]
-description = "Deep code execution flow analysis and root cause investigation"
-config_file = "~/.codex/agents/bug-analyzer/config.toml"
-
-[agents.build-error-resolver]
-description = "Fix build and type errors with minimal diffs"
-config_file = "~/.codex/agents/build-error-resolver/config.toml"
 
 [agents.code-reviewer]
 description = "Expert code review for quality, security, and maintainability"
 config_file = "~/.codex/agents/code-reviewer/config.toml"
 
-[agents.dev-planner]
-description = "Implementation planning and task breakdown"
-config_file = "~/.codex/agents/dev-planner/config.toml"
-
-[agents.refactor-cleaner]
-description = "Dead code cleanup and consolidation specialist"
-config_file = "~/.codex/agents/refactor-cleaner/config.toml"
-
 [agents.tdd-guide]
 description = "Test-driven development workflow guidance"
 config_file = "~/.codex/agents/tdd-guide/config.toml"
-
-# --- Design & Content ---
-
-[agents.ui-sketcher]
-description = "UI blueprint design and interaction specification"
-config_file = "~/.codex/agents/ui-sketcher/config.toml"
-
-[agents.story-generator]
-description = "User story and narrative generation"
-config_file = "~/.codex/agents/story-generator/config.toml"

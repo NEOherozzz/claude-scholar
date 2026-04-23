@@ -281,7 +281,6 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 | Skill | `git-commit` | Conventional Commits に沿ったコミットをローカルで作る |
 | Skill | `git-push` | Conventional Commits に沿って stage / commit / push を行う |
 | Agent | `code-reviewer` | コード変更の正しさ、保守性、実装品質をレビューする |
-| Agent | `dev-planner` | 複雑なエンジニアリング作業を実行可能な工程に分解する |
 
 **進め方**
 - **構造設計**：適切な場面では Factory / Registry パターンを使う
@@ -297,7 +296,6 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 |---|---|---|
 | Skill | `results-analysis` | 厳密統計、実際の科研図、分析付録を生成する |
 | Skill | `results-report` | 分析成果物を、結論・制約・次アクションが明確な完全な実験後レポートへまとめる |
-| Agent | `research-knowledge-curator-obsidian` | repo がバインド済みなら、安定結論を Obsidian 知識ベースへ書き戻す |
 
 **進め方**
 - **データ処理**：実験ログ、metrics ファイル、結果ディレクトリを読む
@@ -368,7 +366,6 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 | 種類 | 名前 | 一行説明 |
 |---|---|---|
 | Skill | `post-acceptance` | slides、ポスター、対外発信素材の準備を支援する |
-| Agent | `ui-sketcher` | 必要に応じて slides、ポスター、発表フローなどの視覚素材構成を支援する |
 
 **進め方**
 - **発表準備**：talk 構成と発表資料の指針を用意する

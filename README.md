@@ -281,7 +281,6 @@ Maintainable ML project development for experiment code and repo hygiene.
 | Skill | `git-commit` | Creates Conventional Commit messages locally. |
 | Skill | `git-push` | Stages, commits, and pushes using Conventional Commits. |
 | Agent | `code-reviewer` | Reviews changed code for correctness, maintainability, and implementation quality. |
-| Agent | `dev-planner` | Breaks complex engineering work into executable implementation steps. |
 
 **How it works**
 - **Structure**: use Factory / Registry patterns where they actually help.
@@ -297,7 +296,6 @@ Strict experiment analysis workflow: statistics, scientific figures, analysis ar
 |---|---|---|
 | Skill | `results-analysis` | Produces strict statistics, real scientific figures, and analysis appendices. |
 | Skill | `results-report` | Converts analysis artifacts into a complete post-experiment report with conclusions, limitations, and next actions. |
-| Agent | `research-knowledge-curator-obsidian` | Writes stable findings back into the Obsidian project knowledge base when the repo is bound. |
 
 **How it works**
 - **Data processing**: read experiment logs, metrics files, and result directories.
@@ -368,7 +366,6 @@ Conference preparation and research communication after acceptance.
 | Type | Name | One-line explanation |
 |---|---|---|
 | Skill | `post-acceptance` | Supports slides, posters, and outward-facing communication after acceptance. |
-| Agent | `ui-sketcher` | Helps structure visual materials such as slides, posters, and presentation flow when needed. |
 
 **How it works**
 - **Presentation**: prepare talk structure and slide guidance.
