@@ -19,7 +19,7 @@
 
 ## Recent News
 
-- **2026-04-22**: **Lightweight core instructions** — replaced the large always-on `CLAUDE.md` / `AGENTS.md` files with compact core instructions, added Chinese companion files, and kept detailed skills, commands, agents, and workflows as on-demand references to reduce default context overhead.
+- **2026-04-22**: **Lightweight core and safe installer lifecycle** — replaced the large always-on `CLAUDE.md` / `AGENTS.md` files with compact core instructions, removed non-core default agents, added Chinese companion files, and added a manifest/state-based uninstall workflow so updates and removals only touch installer-owned files and config entries.
 - **2026-04-15**: **pubfig and pubtab introduced** — introduced [`pubfig`](https://github.com/Galaxy-Dawn/pubfig), a Python package for publication-grade scientific figures, and [`pubtab`](https://github.com/Galaxy-Dawn/pubtab), a Python package for publication-ready tables and Excel↔LaTeX workflows. Together they provide a cleaner production stack for paper figures, benchmark tables, export control, and final artifact QA.
 - **2026-04-15**: **publication-chart-skill integrated into Claude Scholar** — wrapped [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) into `publication-chart-skill`, added the skill to the repository, and connected it to Claude Scholar's analysis and writing boundaries so publication-grade figure/table work now has an explicit handoff route instead of being mixed into general analysis or prose skills.
 
@@ -96,7 +96,7 @@ bash /tmp/claude-scholar/scripts/setup.sh
 
 The installer is **backup-aware and incremental-update friendly**:
 - updates repo-managed `skills/commands/plugins/scripts/utils/`,
-- backs up overwritten files to `~/.opencode/.claude-scholar-backups/<timestamp>/`,
+- backs up overwritten files to `~/.opencode/.opencode-scholar-backups/<timestamp>/`,
 - backs up `opencode.jsonc` to `opencode.jsonc.bak`,
 - preserves an existing `~/.opencode/AGENTS.md` and installs the repo-managed version as `~/.opencode/AGENTS.scholar.md`,
 - preserves an existing `~/.opencode/AGENTS.zh-CN.md` and installs the repo-managed Chinese version as `~/.opencode/AGENTS.zh-CN.scholar.md`,
@@ -112,6 +112,19 @@ cd /tmp/claude-scholar
 git pull --ff-only
 bash scripts/setup.sh
 ```
+
+To uninstall later:
+
+```bash
+cd /tmp/claude-scholar
+bash scripts/uninstall.sh
+```
+
+The installer writes:
+- `~/.opencode/.opencode-scholar-manifest.txt` for files managed by Claude Scholar
+- `~/.opencode/.opencode-scholar-install-state` for safe uninstall metadata, including installed `AGENTS*.md` targets and added `opencode.jsonc` entries
+
+The uninstaller removes only files and config entries recorded in that install state. It does not guess ownership from the current repo checkout.
 
 **Windows**: please use Git Bash or WSL to run the installer.
 

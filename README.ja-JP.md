@@ -19,7 +19,7 @@
 
 ## 最新ニュース
 
-- **2026-04-22**: **軽量なコア指示へ更新** — 大きな always-on `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、中国語 companion ファイルを追加し、詳細な skills、commands、agents、workflow は必要時に読む参照として残しました。これによりデフォルトの context コストを抑えます。
+- **2026-04-22**: **軽量コア指示と安全なインストール lifecycle** — 大きな always-on `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、非中核の default agents を削除し、中国語 companion ファイルを追加しました。さらに manifest/state ベースのアンインストールを追加し、更新と削除がインストーラー所有のファイルと設定項目だけを扱うようにしました。
 - **2026-04-15**: **pubfig と pubtab という 2 つの Python package を導入** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) を論文品質の scientific figures 向け Python package、[`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を publication-ready な tables と Excel↔LaTeX workflows 向け Python package として打ち出し、論文図、benchmark 表、書き出し制御、最終 QA までの生産経路をより明確にしました。
 - **2026-04-15**: **publication-chart-skill を Claude Scholar に統合** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を `publication-chart-skill` としてまとめてリポジトリに追加し、Claude Scholar の分析/執筆スタックの boundary に接続しました。これにより、論文品質の図表作業を汎用分析や prose skill に混ぜず、明示的な handoff で扱えるようになりました。
 
@@ -96,7 +96,7 @@ bash /tmp/claude-scholar/scripts/setup.sh
 
 インストーラーは現在、**バックアップ付きの安全な増分更新**をサポートしています。
 - リポジトリ管理の `skills/commands/plugins/scripts/utils/` を更新
-- 上書き対象ファイルを `~/.opencode/.claude-scholar-backups/<timestamp>/` にバックアップ
+- 上書き対象ファイルを `~/.opencode/.opencode-scholar-backups/<timestamp>/` にバックアップ
 - `opencode.jsonc` も `opencode.jsonc.bak` としてバックアップ
 - `~/.opencode/AGENTS.md` が既に存在する場合は元ファイルを保持し、リポジトリ版を `~/.opencode/AGENTS.scholar.md` として保存
 - `~/.opencode/AGENTS.zh-CN.md` が既に存在する場合は元ファイルを保持し、リポジトリ版の中国語 companion を `~/.opencode/AGENTS.zh-CN.scholar.md` として保存
@@ -112,6 +112,19 @@ cd /tmp/claude-scholar
 git pull --ff-only
 bash scripts/setup.sh
 ```
+
+後でアンインストールする場合：
+
+```bash
+cd /tmp/claude-scholar
+bash scripts/uninstall.sh
+```
+
+インストーラーは次のファイルを書き込みます。
+- `~/.opencode/.opencode-scholar-manifest.txt`：Claude Scholar が管理するファイル一覧
+- `~/.opencode/.opencode-scholar-install-state`：安全なアンインストール用 metadata。実際に書き込まれた `AGENTS*.md` の対象と、追加された `opencode.jsonc` エントリを含みます
+
+アンインストーラーは install state に記録されたファイルと設定エントリだけを削除します。現在の repo checkout から所有権を推測しません。
 
 **Windows**：インストーラーは Git Bash / WSL から実行してください。
 
