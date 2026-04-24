@@ -72,7 +72,7 @@ Claude Scholar は特に次のような人に向いています。
 - **研究構想**：曖昧なテーマを具体的な研究問題、研究ギャップ、初期計画へ収束させる
 - **文献ワークフロー**：Zotero コレクションを通じて論文を検索、取込、整理し、読む
 - **論文ノート**：論文を構造化された読書ノートと再利用可能な論点へ変換する
-- **知識ベースへの蓄積**：安定した知識を Obsidian に書き込み、`Papers / Knowledge / Experiments / Results / Writing` へ振り分ける。ラウンド単位の実験レポートは `Results/Reports/` に保存する
+- **知識ベースへの蓄積**：安定した知識を Obsidian に書き込み、`Sources/Papers / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps` に振り分ける
 - **実験推進**：仮説、実験ライン、実行履歴、主要発見、次アクションを追跡する
 - **厳密分析**：`results-analysis` を用いて厳密統計、実際の科研図、分析成果物を生成する
 - **結果レポート**：`results-report` を用いて完全な実験後レポートを作成し、Obsidian へ書き戻す

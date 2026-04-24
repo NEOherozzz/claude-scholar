@@ -104,11 +104,11 @@ def find_repo_root(cwd: Path) -> Path:
 
 
 def binding_registry_path(repo_root: Path) -> Path:
-    return repo_root / '.claude' / 'project-memory' / 'registry.yaml'
+    return repo_root / '.codex' / 'project-memory' / 'registry.yaml'
 
 
 def project_memory_path(repo_root: Path, project_id: str) -> Path:
-    return repo_root / '.claude' / 'project-memory' / f'{project_id}.md'
+    return repo_root / '.codex' / 'project-memory' / f'{project_id}.md'
 
 
 def load_binding_registry(path: Path) -> dict[str, Any]:
@@ -134,11 +134,7 @@ def load_binding_registry(path: Path) -> dict[str, Any]:
 
 def save_binding_registry(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    try:
-        import yaml  # type: ignore
-        path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True), encoding='utf-8')
-    except Exception:
-        path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 
 def read_text(path: Path, default: str = '') -> str:

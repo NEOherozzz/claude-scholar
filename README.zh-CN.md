@@ -72,7 +72,7 @@ Claude Scholar 当前尤其适合：
 - **研究构思**：把模糊主题收敛成具体研究问题、研究空白和初步计划。
 - **文献工作流**：通过 Zotero 文献集合检索、导入、组织并阅读论文。
 - **论文笔记**：把论文转成结构化阅读笔记和可复用论点。
-- **知识库沉淀**：将稳定知识写入 Obsidian，并按 `Papers / Knowledge / Experiments / Results / Writing` 路由整理，具体轮次的实验报告存放在 `Results/Reports/` 下。
+- **知识库沉淀**：将稳定知识写入 Obsidian，并按 `Sources/Papers / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps` 路由整理。
 - **实验推进**：跟踪假设、实验线、运行历史、关键发现和下一步动作。
 - **严格分析**：使用 `results-analysis` 生成严谨统计、真实科研图和分析产物。
 - **结果报告**：使用 `results-report` 生成完整实验后总结报告，并写回 Obsidian。
