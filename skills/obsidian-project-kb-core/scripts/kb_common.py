@@ -134,11 +134,7 @@ def load_binding_registry(path: Path) -> dict[str, Any]:
 
 def save_binding_registry(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    try:
-        import yaml  # type: ignore
-        path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True), encoding='utf-8')
-    except Exception:
-        path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 
 def read_text(path: Path, default: str = '') -> str:

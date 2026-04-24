@@ -27,11 +27,11 @@ export const SessionStartPlugin: Plugin = async (ctx) => {
         msg += `🧠 Obsidian project memory: bound (${binding.projectId || "unknown-project"})\n`;
         if (binding.vaultRoot) msg += `  - Vault root: ${binding.vaultRoot}\n`;
         if (binding.memoryPath) msg += `  - Memory: ${binding.memoryPath}\n`;
-        msg += "  - Suggested commands: /obsidian-sync, /obsidian-note\n";
+        msg += "  - Suggested commands: /kb-sync, /kb-status\n";
       } else if (candidate.candidate) {
         msg += "🧠 Obsidian project memory: research repo candidate\n";
         msg += `  - Detected markers: ${candidate.markers.join(", ")}\n`;
-        msg += "  - Suggested command: /obsidian-init\n";
+        msg += "  - Suggested command: /kb-init\n";
       }
       console.log(msg.trimEnd());
     },
