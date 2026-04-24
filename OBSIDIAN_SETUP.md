@@ -1,6 +1,6 @@
 # Obsidian Project Knowledge Base Setup
 
-Claude Scholar ships with a built-in Obsidian research knowledge-base workflow. It does **not** require MCP or an API key.
+Codex Scholar ships with a built-in Obsidian research knowledge-base workflow. It does **not** require MCP or an API key.
 
 ## What this provides
 
@@ -26,27 +26,23 @@ Obsidian is treated as the default knowledge base for a research project, not ju
 
 ## Built-in skills
 
-Claude Scholar includes official Obsidian-oriented skills plus project-focused wrappers.
+Codex Scholar includes a project-scoped Obsidian KB workflow.
 
 Most relevant for the default workflow:
 
-- `obsidian-project-memory`
-- `obsidian-project-bootstrap`
-- `obsidian-research-log`
-- `obsidian-experiment-log`
+- `obsidian-project-kb-core`
+- `obsidian-source-ingestion`
 - `obsidian-literature-workflow`
-- `obsidian-project-lifecycle`
-- `obsidian-markdown`
-- `obsidian-cli`
+- `obsidian-kb-artifacts`
 - `defuddle`
 
 Some optional graph-oriented helpers may still exist in the repo, but the default workflow does **not** depend on `.base`, MCP, or API services. The main default graph artifact is `Maps/literature.canvas`; additional `.base` views or project/experiment canvases are explicit-only.
 
 ## Default behavior
 
-When Claude Scholar is running inside a repository that contains `.codex/project-memory/registry.yaml`, it should treat the repository as bound to an Obsidian project knowledge base and update it by default.
+When Codex Scholar is running inside a repository that contains `.codex/project-memory/registry.yaml`, it should treat the repository as bound to an Obsidian project knowledge base and update it by default.
 
-If the repository is not yet bound, but it looks like a research project (for example it contains `.git`, `README.md`, `docs/`, `notes/`, `plan/`, `results/`, `outputs/`, `src/`, or `scripts/`), Claude Scholar should bootstrap a project knowledge base automatically.
+If the repository is not yet bound, but it looks like a research project (for example it contains `.git`, `README.md`, `docs/`, `notes/`, `plan/`, `results/`, `outputs/`, `src/`, or `scripts/`), Codex Scholar should bootstrap a project knowledge base automatically.
 
 ## Project structure in the vault
 
@@ -54,21 +50,36 @@ If the repository is not yet bound, but it looks like a research project (for ex
 Research/{project-slug}/
   00-Hub.md
   01-Plan.md
+  02-Index.md
+  Sources/
+    Papers/
+    Web/
+    Docs/
+    Data/
+    Interviews/
+    Notes/
   Knowledge/
-  Papers/
   Experiments/
   Results/
+    Reports/
   Writing/
   Daily/
+  Maps/
   Archive/
+  _system/
+    registry.md
+    schema.md
+    lint-report.md
 ```
 
 Key generated files commonly include:
 
-- `Knowledge/Source-Inventory.md`
-- `Knowledge/Codebase-Overview.md`
-- `Maps/literature.canvas`
-- `.codex/project-memory/<project_id>.md`
+- `02-Index.md`
+- `_system/registry.md`
+- `_system/schema.md`
+- `_system/lint-report.md`
+- `.codex/project-memory/{project_id}.md`
+- `Maps/literature.canvas` when literature workflow needs it
 
 ## Repository-local memory binding
 
@@ -77,11 +88,11 @@ Each research repo gets a local binding under:
 ```text
 .codex/project-memory/
   registry.yaml
-  <project_id>.md
+  {project_id}.md
 ```
 
 - `registry.yaml` stores the repo ↔ vault binding
-- `<project_id>.md` stores the assistant-facing project memory for incremental syncs
+- `{project_id}.md` stores the assistant-facing project memory for incremental syncs
 
 ## Note language
 
@@ -90,7 +101,7 @@ Generated and synced notes resolve their language with this priority:
 2. environment variable `OBSIDIAN_NOTE_LANGUAGE`
 3. default `en`
 
-Note: the file is currently named `registry.yaml` for historical reasons, but its on-disk format is JSON.
+Note: `registry.yaml` remains a repo-local runtime binding file. The visible project source of truth stays in `_system/registry.md`.
 
 Supported values:
 - `en`
@@ -112,27 +123,24 @@ Per-project example:
 
 Existing English and Chinese headings remain compatible during sync, so changing the configured language does not break older notes.
 
-## Main workflows
+## Main workflows in Codex
 
-Codex does not expose slash commands the way Claude Code does. In the Codex edition, use the same workflows through natural-language prompts plus the corresponding skills/agents:
+Codex does not assume Claude Code-style slash commands. Use the same KB flows through natural-language requests plus the corresponding skills and helper scripts:
 
-- initialize or import a project knowledge base
-- ingest a new Markdown file or directory via classify -> promote / merge / stage-to-daily
-- force deterministic filesystem sync and refresh helper notes
-- repair or strengthen wikilinks across canonical notes
-- generate literature synthesis from project notes
-- normalize paper notes and connect them to project context
-- archive / purge / rename a single canonical note
-- detach / archive / purge / rebuild a project knowledge base
-- explicitly generate optional `.base` views and extra canvases
+- initialize or import a project KB via `obsidian-project-kb-core`
+- route external material into `Sources/*` via `obsidian-source-ingestion`
+- run deterministic maintenance through `skills/obsidian-project-kb-core/scripts/project_kb.py`
+- repair wikilinks and derived artifacts through `obsidian-kb-artifacts`
+- generate literature synthesis from `Sources/Papers` through `obsidian-literature-workflow`
+- archive, purge, rename, detach, or rebuild KB objects through the lifecycle helpers
 
 ## Minimum bound-repo maintenance
 
-When a repo is already bound through `.codex/project-memory/registry.yaml`, Claude Scholar should keep automatic maintenance conservative:
+When a repo is already bound through `.codex/project-memory/registry.yaml`, Codex Scholar should keep automatic maintenance conservative:
 
 - always verify `Daily/YYYY-MM-DD.md` when the turn changes research state,
 - update `00-Hub.md` only when top-level project status actually changes,
-- update `.codex/project-memory/<project_id>.md` whenever project state changes,
+- update `.codex/project-memory/{project_id}.md` whenever project state changes,
 - keep `Knowledge/`, `Experiments/`, `Results/`, and `Writing/` agent-first rather than automatically rewriting them every turn.
 
 ## Optional Obsidian CLI installation
@@ -159,10 +167,10 @@ If you see `Command line interface is not enabled`, the shell path is fine but t
 - keep vault content
 - keep project memory file
 
-### Archive (default for “remove this project’s knowledge”)
-- move the project under `Archive/`
-- disable syncing
-- keep project memory for future reactivation
+### Archive
+- **note archive** moves a canonical note into `Research/{project-slug}/Archive/`
+- **project archive** moves the whole project into `Research/_archived/{project-slug}-{date}/`
+- archive keeps history and disables syncing for project-level archive
 
 ### Purge
 - permanently delete the binding, project memory, and vault project folder
@@ -170,7 +178,7 @@ If you see `Command line interface is not enabled`, the shell path is fine but t
 
 ## Optional CLI and URI usage
 
-Claude Scholar can optionally use the official Obsidian CLI and URI scheme:
+Codex Scholar can optionally use the official Obsidian CLI and URI scheme:
 
 - CLI docs: <https://help.obsidian.md/cli>
 - URI docs: <https://help.obsidian.md/uri>
@@ -194,6 +202,28 @@ obsidian://search?vault=My%20Vault&query=%23experiment
 |-------|----------|
 | Bootstrap fails with missing vault path | Set `OBSIDIAN_VAULT_PATH` or pass a vault path explicitly |
 | Project keeps re-importing | Check `.codex/project-memory/registry.yaml` exists and points to the correct repo root |
-| The vault still shows `Views/`, `Concepts/`, or `Datasets/` as defaults | Those are from older docs or older project generations; the current default workflow uses the compact structure above and only keeps `Maps/literature.canvas` by default |
+| The vault still shows older topologies | Those are from older docs or older project generations; the current default workflow uses the structure above and only keeps `Maps/literature.canvas` by default |
 | CLI commands fail | Check that `Settings -> General -> Advanced -> Command line interface` is enabled; otherwise continue with filesystem-only sync |
 | “Remove project knowledge” is too destructive | Use archive or detach; purge is only for permanent deletion |
+
+## WSL -> Windows mirror workflow
+
+If you run Codex Scholar inside WSL but prefer opening Obsidian through native Windows for more stable window behavior, use a two-copy setup:
+
+- keep the WSL vault as the source of truth (for example `<repo-root>/obsidian-vault`)
+- keep a Windows-local mirror directory mounted in WSL (for example `<wsl-mounted-windows-vault-path>`)
+- open the mirrored Windows-local directory in Windows Obsidian
+
+Sync with:
+
+```bash
+bash scripts/sync_obsidian_to_windows.sh   --windows-path <wsl-mounted-windows-vault-path>
+```
+
+Preview first if needed:
+
+```bash
+bash scripts/sync_obsidian_to_windows.sh   --windows-path <wsl-mounted-windows-vault-path>   --dry-run
+```
+
+By default the sync deletes mirror-only files that no longer exist in the WSL source. Add `--no-delete` if you want to keep extra files in the Windows mirror.

@@ -393,23 +393,24 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 
 ### Obsidian プロジェクト知識ベース
 
-Obsidian を、バラバラなメモの山ではなく、安定した研究知識の沈殿先として扱います。
+Obsidian を、単なるメモ置き場ではなく、project-scoped な永続知識面として扱います。
 
 | 種類 | 名前 | 一行説明 |
 |---|---|---|
-| Skill | `obsidian-project-memory` | プロジェクトレベルの Obsidian 知識ベースを維持し、どの安定知識を書き戻すかを判断する |
-| Skill | `obsidian-project-bootstrap` | 新規または既存研究プロジェクト向けに Obsidian 知識ベース構造を初期化する |
-| Skill | `obsidian-research-log` | 毎日の研究進捗、計画、発想、TODO を知識ベースに書き込む |
-| Skill | `obsidian-experiment-log` | 実験設定、実行過程、主要発見、次アクションを Obsidian に記録する |
-| Skill | `obsidian-literature-workflow` | Obsidian 内でファイルシステム中心の paper note 正規化と文献統合を行う |
-| Skill | `zotero-obsidian-bridge` | Zotero コレクションを Obsidian 内の正規論文ノートと文献マップへ接続する |
+| Skill | `obsidian-project-kb-core` | project-scoped KB の bootstrap、routing、registry、index、daily、lifecycle を統括する |
+| Skill | `obsidian-source-ingestion` | 外部資料を `Sources/Papers`、`Sources/Web`、`Sources/Docs`、`Sources/Data`、`Sources/Interviews`、`Sources/Notes` に取り込む |
+| Skill | `obsidian-literature-workflow` | `Sources/Papers` から `Knowledge`、`Writing`、`Maps/literature.canvas` へ文献ワークフローを流す |
+| Skill | `obsidian-kb-artifacts` | wikilink、registry table、canvas、optional `.base`、link repair など Obsidian native artifact を扱う |
+| Skill | `zotero-obsidian-bridge` | Zotero コレクションを project-scoped な論文ノートと文献統合へ接続する |
 
 **進め方**
 - 既存 repo を Obsidian vault にバインドする
-- 安定知識を `Papers / Knowledge / Experiments / Results / Writing` に振り分け、ラウンド単位の実験レポートは `Results/Reports/` に保存する
-- `Daily/` と project memory を保守的に維持する
-- 新しい Markdown を正しい正規ノートへ整理して取り込む
-- 実際に必要なときだけ canvas や view を生成する
+- 安定知識を `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps` に振り分ける
+- `Daily/` と repo-local binding metadata を保守的に維持する
+- 新しい source material を正しい canonical note に取り込む
+- 追加の `.base` や canvas は明示要求があるときだけ生成する
+
+`obsidian-project-memory`、`obsidian-project-bootstrap`、`obsidian-experiment-log` など旧来の Codex 向け skill 名は、移行期間中は compatibility shim として残す。旧ディレクトリ構造を復活させるためには使わない。
 
 ### Codex セッション規律と Hook エミュレーション
 

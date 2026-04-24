@@ -359,13 +359,13 @@ def session_start(cwd: Path, as_json: bool) -> int:
         print(f"  - Auto-sync: {'on' if pm.get('auto_sync') else 'off'}")
         if pm.get("vault_root"):
             print(f"  - Vault root: {pm['vault_root']}")
-        print("  - Suggested follow-up: obsidian-project-memory / obsidian-note / obsidian-review")
+        print("  - Suggested follow-up: obsidian-project-kb-core / obsidian-source-ingestion / obsidian-literature-workflow")
     else:
         print(f"- Obsidian project memory: unbound ({pm['reason']})")
         rc = payload["research_candidate"]
         if rc["candidate"]:
             print(f"  - Research repo candidate markers: {', '.join(rc['markers'])}")
-            print("  - Suggested follow-up: obsidian-project-bootstrap")
+            print("  - Suggested follow-up: obsidian-project-kb-core")
     todos = payload["todo_candidates"]
     if todos:
         print("- Recent TODO candidates:")
@@ -427,7 +427,7 @@ def post_edit(cwd: Path, files: list[str], as_json: bool) -> int:
     elif research_relevant and candidate["candidate"]:
         print("- Obsidian-aware reminder:")
         print(f"  - Research repo candidate markers: {', '.join(candidate['markers'])}")
-        print("  - Suggested follow-up: obsidian-project-bootstrap")
+        print("  - Suggested follow-up: obsidian-project-kb-core")
     return 0
 
 
@@ -474,7 +474,7 @@ def session_end(cwd: Path, as_json: bool) -> int:
             print(f"    - {item}")
     elif candidate["candidate"]:
         print(f"- Research repo candidate markers: {', '.join(candidate['markers'])}")
-        print("- Suggested follow-up: obsidian-project-bootstrap")
+        print("- Suggested follow-up: obsidian-project-kb-core")
     print("- Recommended next step: run the session-wrap-up skill for a human-readable closeout.")
     return 0
 

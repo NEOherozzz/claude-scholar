@@ -393,23 +393,24 @@ These workflows run behind the primary workflows to strengthen the overall Codex
 
 ### Obsidian Project Knowledge Base
 
-Treat Obsidian as a durable research knowledge sink rather than a pile of disconnected notes.
+Use Obsidian as the project-scoped durable knowledge surface, not just as a note dump.
 
 | Type | Name | One-line explanation |
 |---|---|---|
-| Skill | `obsidian-project-memory` | Maintains the project-level Obsidian knowledge base and decides what stable knowledge should be written back. |
-| Skill | `obsidian-project-bootstrap` | Initializes an Obsidian knowledge base for a new or existing research project. |
-| Skill | `obsidian-research-log` | Writes daily research progress, plans, ideas, and TODOs into the knowledge base. |
-| Skill | `obsidian-experiment-log` | Records experiment setup, run history, findings, and follow-up actions in Obsidian. |
-| Skill | `obsidian-literature-workflow` | Handles filesystem-first paper-note normalization and literature synthesis inside Obsidian. |
-| Skill | `zotero-obsidian-bridge` | Connects Zotero collections to canonical paper notes and literature maps in Obsidian. |
+| Skill | `obsidian-project-kb-core` | Main authority for project-scoped KB bootstrap, routing, registry, index, daily, and lifecycle updates. |
+| Skill | `obsidian-source-ingestion` | Ingest external material into `Sources/Papers`, `Sources/Web`, `Sources/Docs`, `Sources/Data`, `Sources/Interviews`, or `Sources/Notes`. |
+| Skill | `obsidian-literature-workflow` | Run the paper-note to synthesis workflow from `Sources/Papers` into `Knowledge`, `Writing`, and `Maps/literature.canvas`. |
+| Skill | `obsidian-kb-artifacts` | Handle Obsidian-native artifacts such as wikilinks, registry tables, canvas files, optional Bases, and link repair. |
+| Skill | `zotero-obsidian-bridge` | Connect Zotero collections to canonical paper notes and literature synthesis inside the project KB. |
 
 **How it works**
 - bind an existing repo to an Obsidian vault,
-- route stable knowledge into `Papers / Knowledge / Experiments / Results / Writing`, with round-level experiment reports stored under `Results/Reports/`,
-- maintain `Daily/` and project memory conservatively,
-- ingest new Markdown into the right canonical note,
-- generate canvases or views only when the workflow actually calls for them.
+- route stable knowledge into `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps`,
+- keep `Daily/` and repo-local binding metadata updated conservatively,
+- ingest new source material into the correct canonical destination,
+- only generate extra Bases or canvases on explicit request.
+
+Legacy Codex-era skill names such as `obsidian-project-memory`, `obsidian-project-bootstrap`, and `obsidian-experiment-log` remain as compatibility shims for one transition window. They should forward users toward the new KB-core workflow instead of restoring the old layout.
 
 **Note language configuration**
 

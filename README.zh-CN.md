@@ -393,23 +393,24 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 
 ### Obsidian 项目知识库
 
-把 Obsidian 当作稳定科研知识的沉淀中心，而不是一堆互不相连的零散笔记。
+把 Obsidian 当作项目作用域的稳定知识层，而不是随手堆放笔记的地方。
 
 | 类型 | 名字 | 一句话解释 |
 |---|---|---|
-| Skill | `obsidian-project-memory` | 维护项目级 Obsidian 知识库，并决定哪些稳定知识需要写回。 |
-| Skill | `obsidian-project-bootstrap` | 为新项目或已有科研项目初始化对应的 Obsidian 知识库结构。 |
-| Skill | `obsidian-research-log` | 将每日研究进展、计划、想法和 TODO 写入知识库。 |
-| Skill | `obsidian-experiment-log` | 在 Obsidian 中记录实验设置、运行过程、关键发现和后续动作。 |
-| Skill | `obsidian-literature-workflow` | 在 Obsidian 内处理以文件系统为核心的 paper note 规范化与文献综合。 |
-| Skill | `zotero-obsidian-bridge` | 把 Zotero 文献集合接到 Obsidian 中的规范论文笔记和文献图谱。 |
+| Skill | `obsidian-project-kb-core` | 负责项目级 KB 的初始化、路由、registry、index、daily 和 lifecycle。 |
+| Skill | `obsidian-source-ingestion` | 把外部材料写入 `Sources/Papers`、`Sources/Web`、`Sources/Docs`、`Sources/Data`、`Sources/Interviews` 或 `Sources/Notes`。 |
+| Skill | `obsidian-literature-workflow` | 管理从 `Sources/Papers` 到 `Knowledge`、`Writing`、`Maps/literature.canvas` 的文献工作流。 |
+| Skill | `obsidian-kb-artifacts` | 处理 wikilink、registry 表格、canvas、可选 `.base` 和 link repair 等 Obsidian 原生产物。 |
+| Skill | `zotero-obsidian-bridge` | 把 Zotero 文献集合接入项目级论文笔记与文献综合流程。 |
 
 **工作方式**
 - 将已有 repo 绑定到 Obsidian vault，
-- 把稳定知识路由进 `Papers / Knowledge / Experiments / Results / Writing`，具体轮次的实验报告存放在 `Results/Reports/` 下，
-- 保守维护 `Daily/` 与项目记忆，
-- 把新 Markdown 整理进正确的规范笔记，
-- 仅在工作流需要时生成 canvas 或视图。
+- 把稳定知识路由进 `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps`，
+- 以保守方式维护 `Daily/` 和 repo-local binding metadata，
+- 把新的 source material 路由进正确的 canonical note，
+- 只有在显式请求时才生成额外的 `.base` 或 canvas。
+
+旧的 `obsidian-project-memory`、`obsidian-project-bootstrap`、`obsidian-experiment-log` 等 Codex 时代技能名，会在一个过渡窗口内保留为 compatibility shim。它们应把用户导向新的 KB-core 工作流，而不是恢复旧目录结构。
 
 ### Codex 会话约束与 Hook 模拟
 

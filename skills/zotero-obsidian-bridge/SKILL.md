@@ -37,7 +37,7 @@ Use this skill when the user wants to:
 
 ## Default workflow
 
-1. Resolve the current project via `$obsidian-project-memory`.
+1. Resolve the current project via `$obsidian-project-kb-core`.
    - If the repo is already bound, use the existing vault.
    - If it looks like a research repo but is not bound, bootstrap it first.
 2. Read Zotero items from the target collection/query.

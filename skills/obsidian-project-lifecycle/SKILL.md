@@ -1,39 +1,15 @@
 ---
 name: obsidian-project-lifecycle
-description: Use this skill when the user wants to detach, archive, purge, or otherwise change the lifecycle state of an Obsidian project knowledge base.
+description: Compatibility shim for KB lifecycle actions. Prefer obsidian-project-kb-core.
 ---
 
-# Obsidian Project Lifecycle
+# Obsidian Project Lifecycle (Compatibility Shim)
 
-Use the shared helper script for deterministic lifecycle operations.
+Use `obsidian-project-kb-core` for archive, purge, rename, detach, and rebuild actions.
 
-## Role in the workflow
-
-This is a **supporting skill** under `obsidian-project-memory`.
-
-Use it for project-level state changes and, when needed, note-level removal or rename flows.
-
-## Project-level commands
+Compatibility helper:
 
 ```bash
-python3 ../obsidian-project-memory/scripts/project_kb.py lifecycle --cwd "$PWD" --mode detach
-python3 ../obsidian-project-memory/scripts/project_kb.py lifecycle --cwd "$PWD" --mode archive
-python3 ../obsidian-project-memory/scripts/project_kb.py lifecycle --cwd "$PWD" --mode purge
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/obsidian-project-kb-core/scripts/project_kb.py" lifecycle --cwd "$PWD" --mode archive
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/obsidian-project-kb-core/scripts/project_kb.py" note-lifecycle --cwd "$PWD" --mode rename --note "Experiments/old.md" --dest "Experiments/new.md"
 ```
-
-## Note-level command
-
-```bash
-python3 ../obsidian-project-memory/scripts/project_kb.py note-lifecycle --cwd "$PWD" --mode archive --note "Results/Old-Result.md"
-python3 ../obsidian-project-memory/scripts/project_kb.py note-lifecycle --cwd "$PWD" --mode purge --note "Results/Old-Result.md"
-python3 ../obsidian-project-memory/scripts/project_kb.py note-lifecycle --cwd "$PWD" --mode rename --note "Experiments/Old-Name.md" --dest "Experiments/New-Name.md"
-```
-
-## Policy
-
-- **Detach**: stop syncing, keep vault content.
-- **Archive**: default for “remove this project's knowledge”; move the project to `Archive/` and disable syncing.
-- **Purge**: only when the user explicitly requests permanent deletion.
-- **Rename / move**: treat as update plus link repair, not delete plus create.
-
-Always summarize what was removed, what was preserved, and whether auto-sync remains enabled.

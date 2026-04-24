@@ -672,6 +672,9 @@ copy_components() {
   if [ -d "$SRC_DIR/skills" ]; then
     copy_dir_safely "$SRC_DIR/skills" "$CODEX_HOME/skills"
   fi
+  if [ -d "$SRC_DIR/templates" ]; then
+    copy_dir_safely "$SRC_DIR/templates" "$CODEX_HOME/templates"
+  fi
   if [ -d "$SRC_DIR/agents" ]; then
     copy_dir_safely "$SRC_DIR/agents" "$CODEX_HOME/agents"
   fi
@@ -756,6 +759,7 @@ main() {
   echo "  Config:  $CODEX_HOME/config.toml"
   echo "  Auth:    $CODEX_HOME/auth.json"
   echo "  Skills:  $CODEX_HOME/skills/"
+  echo "  Templates: $CODEX_HOME/templates/"
   echo "  Agents:  $CODEX_HOME/agents/"
   echo ""
   info "Existing model/provider/API key settings are preserved when you choose the incremental update path."
