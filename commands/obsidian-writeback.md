@@ -1,9 +1,9 @@
 ---
 name: obsidian-writeback
-description: Deterministically create or update one canonical Obsidian note in the bound project knowledge base using the project_kb.py helper
+description: Compatibility command for deterministic canonical-note writeback into the bound project KB.
 args:
   - name: kind
-    description: knowledge, paper, experiment, result, or writing
+    description: knowledge, paper, experiment, result, report, or writing
     required: true
   - name: query
     description: Semantic query used to resolve the best existing canonical note when no explicit note path is given
@@ -14,27 +14,29 @@ args:
   - name: title
     description: Preferred title when creating a new note
     required: false
-tags: [Research, Obsidian, Writeback, Canonical Notes]
+tags: [Research, Obsidian, Writeback, Deprecated]
 ---
 
-# /obsidian-writeback - Deterministic Canonical Note Writeback
+# /obsidian-writeback (compatibility)
 
-Use this command when the user explicitly wants a canonical Obsidian note to be created or updated and you do not want to rely on ad-hoc freeform vault editing.
+Use `/kb-*` plus `obsidian-project-kb-core` as the default workflow.
+
+Keep this command only when you need a deterministic compatibility entrypoint that creates or updates exactly one canonical note in the bound KB.
 
 ## Default workflow
 
-1. Resolve the bound project knowledge base.
+1. Resolve the bound project KB.
 2. Read the minimum context first:
-   - `.opencode/project-memory/<project_id>.md`
+   - `.opencode/project-memory/{project_id}.md`
    - `00-Hub.md`
    - `01-Plan.md`
    - the best matching canonical note, if it already exists
-3. Synthesize the final markdown content **before** writing.
-4. Save that prepared markdown to a temporary file.
-5. Call the deterministic helper:
+3. Prepare the final markdown content before writing.
+4. Save that content to a temporary file.
+5. Call the compatibility helper:
 
 ```bash
-python3 "$HOME/.opencode/skills/obsidian-project-memory/scripts/project_kb.py" writeback-note \
+python3 "${OPENCODE_DIR:-$HOME/.opencode}/skills/obsidian-project-memory/scripts/project_kb.py" writeback-note \
   --cwd "$PWD" \
   --kind "$kind" \
   --query "$query" \
@@ -45,7 +47,7 @@ python3 "$HOME/.opencode/skills/obsidian-project-memory/scripts/project_kb.py" w
 If the target path is already known, prefer:
 
 ```bash
-python3 "$HOME/.opencode/skills/obsidian-project-memory/scripts/project_kb.py" writeback-note \
+python3 "${OPENCODE_DIR:-$HOME/.opencode}/skills/obsidian-project-memory/scripts/project_kb.py" writeback-note \
   --cwd "$PWD" \
   --kind "$kind" \
   --note "$note" \
@@ -53,30 +55,30 @@ python3 "$HOME/.opencode/skills/obsidian-project-memory/scripts/project_kb.py" w
   --content-file "$temp_file"
 ```
 
-## What the helper does
+## What the helper updates
 
-- resolves the best canonical target note,
-- updates that note or creates it if missing,
-- normalizes frontmatter (`type`, `title`, `project`, `status`, `updated`),
-- refreshes `00-Hub.md` core index safely,
-- appends a minimal writeback record to today's `Daily/`,
-- updates repo-local project memory.
+- the resolved canonical note,
+- normalized frontmatter (`type`, `title`, `project`, `status`, `updated`),
+- `_system/registry.md`,
+- `02-Index.md`,
+- today's `Daily/` note,
+- `00-Hub.md` recent changes,
+- repo-local `.opencode/project-memory/{project_id}.md`.
 
-## Preferred usage
+## Preferred targets
 
-- Use this command for:
-  - `Knowledge/Project-Overview.md`
-  - `Knowledge/Research-Questions.md`
-  - canonical experiment notes
-  - canonical result notes
-  - canonical paper notes
-  - writing notes that already have a stable durable target
-- Prefer this command whenever the user has asked for **actual knowledge-base maintenance**, not just exploration.
+Use this compatibility path for one-shot deterministic writeback into:
+- `Knowledge/*.md`
+- `Sources/Papers/*.md`
+- `Experiments/*.md`
+- `Results/*.md`
+- `Results/Reports/*.md`
+- `Writing/*.md`
 
 ## Final response
 
 Include:
 - whether the helper created or updated the note,
 - the final canonical note path,
-- any related daily / project-memory writeback surfaces,
-- optional Obsidian open shortcuts.
+- the related daily/project-memory surfaces,
+- the recommended `/kb-*` replacement for future use.

@@ -73,7 +73,7 @@ Claude Scholar は特に次のような人に向いています。
 - **研究構想**：曖昧なテーマを具体的な研究問題、研究ギャップ、初期計画へ収束させる
 - **文献ワークフロー**：Zotero コレクションを通じて論文を検索、取込、整理し、読む
 - **論文ノート**：論文を構造化読書ノートと再利用可能な論点へ変換する
-- **知識ベースへの蓄積**：安定知識を Obsidian に書き込み、`Papers / Knowledge / Experiments / Results / Writing` に振り分ける。ラウンド単位の実験レポートは `Results/Reports/` に保存する
+- **知識ベースへの蓄積**：安定知識を Obsidian に書き込み、`Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps` に振り分ける。
 - **実験推進**：仮説、実験ライン、実行履歴、主要発見、次アクションを追跡する
 - **厳密分析**：`results-analysis` を用いて厳密統計、実際の科研図、分析成果物を生成する
 - **結果レポート**：`results-report` を用いて完全な実験レビューを作成し、Obsidian へ書き戻す
@@ -244,16 +244,17 @@ Claude Scholar は現在、次の CLI ワークフローを対象にしていま
 
 ### Obsidian
 
-次のような場面に向いています。
-- ファイルシステム中心のプロジェクト知識ベースを維持する
-- `Papers/` を管理する
-- `Knowledge/` を管理する
-- `Experiments/` を管理する
-- `Results/` を管理する
-- `Results/Reports/` を管理する
-- `Writing/` と `Daily/` を管理する
+ファイルシステムファーストの研究ナレッジベースとしてObsidianを利用できます:
+- `Sources/`
+- `Knowledge/`
+- `Experiments/`
+- `Results/`
+- `Results/Reports/`
+- `Writing/`
+- `Daily/`
+- `Maps/`
 
-詳しくは [OBSIDIAN_SETUP.ja-JP.md](./OBSIDIAN_SETUP.ja-JP.md) を参照してください。
+詳細は [OBSIDIAN_SETUP.ja-JP.md](./OBSIDIAN_SETUP.ja-JP.md) を参照。
 
 ## 主要ワークフロー
 
@@ -401,33 +402,45 @@ Claude Scholar は現在、次の CLI ワークフローを対象にしていま
 
 ### Obsidian プロジェクト知識ベース
 
-Obsidian を、気軽に積んだメモ置き場ではなく、安定した研究知識の沈殿先として扱います。
+Obsidian を、単なるメモ置き場ではなく、project-scoped な durable knowledge surface として扱います。
 
 | 種類 | 名前 | 一行説明 |
 |---|---|---|
-| Skill | `obsidian-project-memory` | プロジェクトレベルの Obsidian 知識ベースを維持し、どの安定知識を書き戻すかを判断する |
-| Skill | `obsidian-project-bootstrap` | 新規または既存研究プロジェクト向けに Obsidian 知識ベース構造を初期化する |
-| Skill | `obsidian-research-log` | 毎日の研究進捗、計画、発想、TODO を知識ベースへ書き込む |
-| Skill | `obsidian-experiment-log` | 実験設定、実行過程、結果、次アクションを Obsidian に記録する |
-| Command | `/obsidian-ingest` | 新しい Markdown ファイルやディレクトリを適切な知識ベース位置へ整理して取り込む |
-| Command | `/obsidian-note` | 単一 note の検索、リネーム、アーカイブ、削除などのライフサイクル操作を行う |
-| Command | `/obsidian-views` | `.base` などの Obsidian view ファイルを生成または更新する |
+| Skill | `obsidian-project-kb-core` | project-scoped KB の bootstrap、routing、registry、index、daily、lifecycle を統括する主 skill |
+| Skill | `obsidian-source-ingestion` | 外部資料を `Sources/Papers`、`Sources/Web`、`Sources/Docs`、`Sources/Data`、`Sources/Interviews`、`Sources/Notes` に取り込む |
+| Skill | `obsidian-literature-workflow` | `Sources/Papers` から `Knowledge`、`Writing`、`Maps/literature.canvas` へ文献 synthesis を進める |
+| Skill | `obsidian-kb-artifacts` | wikilinks、registry tables、canvas、optional Bases、link repair など Obsidian-native artifacts を扱う |
+| Command | `/kb-init` | `Research/{project-slug}/` 配下に vault-first KB を初期化する |
+| Command | `/kb-status` | バインド済み project root から現在の KB 状態を要約する |
+| Command | `/kb-ingest` | 新しい source material を正しい canonical KB destination に振り分ける |
+| Command | `/kb-log` | 当日の `Daily/` と関連 project surfaces を保守的に更新する |
+| Command | `/kb-sync` | registry、index、daily、runtime binding state を deterministic に再同期する |
+| Command | `/kb-links` | canonical notes 間の wikilinks を修復または強化する |
+| Command | `/kb-promote` | `Daily/` や source notes から durable content を canonical notes へ昇格する |
+| Command | `/kb-index` | `02-Index.md` を human-readable な project navigator として再生成する |
+| Command | `/kb-lint` | deterministic KB health checks を実行し `_system/lint-report.md` を更新する |
+| Command | `/kb-archive` | link と registry を保ちながら KB object の archive、detach、purge、rename を行う |
+| Command | `/kb-map` | 既定の literature canvas 以外の explicit-only artifacts を生成または修復する |
+| Command | `/kb-literature-review` | `Sources/Papers` から `Knowledge`、`Writing`、`Maps/literature.canvas` を生成する |
+
+Legacy `/obsidian-*` commands は移行期間中の deprecated alias として残り、`/kb-*` surface に転送されます。旧ディレクトリ構造は復活させません。
 
 **進め方**
 - 既存 repo を Obsidian vault にバインドする
-- 安定知識を `Papers / Knowledge / Experiments / Results / Writing` に振り分け、ラウンド単位の実験レポートは `Results/Reports/` に保存する
-- `Daily/` と project memory を保守的に維持する
-- 新しい Markdown を分類し、正しい正規ノートへ統合する
-- 必要な時だけ追加 view や canvas を生成する
+- 安定知識を `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps` に振り分ける
+- `Daily/` と repo-local binding metadata を保守的に維持する
+- 新しい source material を正しい canonical destination に取り込む
+- 追加の Bases や canvas は明示要求がある場合だけ生成する
+- deterministic resync は `/kb-sync`、単独の link repair は `/kb-links` を使う
 
 **ノート言語設定**
 
 Obsidian ノート生成・同期時の言語は次の優先順位で解決されます。
-1. プロジェクト設定：`.opencode/project-memory/registry.yaml` の `note_language`
-2. 環境変数：`OBSIDIAN_NOTE_LANGUAGE`
-3. デフォルト：`en`
+1. project config: `.opencode/project-memory/registry.yaml` -> `note_language`
+2. environment variable: `OBSIDIAN_NOTE_LANGUAGE`
+3. default: `en`
 
-補足：ファイル名は `registry.yaml` のままですが、実際の on-disk format は JSON です。
+補足：`registry.yaml` は歴史的互換性のために名前だけ残っており、repo-local runtime binding file として扱います。project 内で見える source of truth は `_system/registry.md` です。
 
 プロジェクト単位の例：
 

@@ -10,7 +10,7 @@ set -euo pipefail
 OPENCODE_DIR="${OPENCODE_DIR:-$HOME/.opencode}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SRC_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-COMPONENTS=(skills commands plugins scripts utils)
+COMPONENTS=(skills commands plugins scripts utils templates)
 AGENTS_MD_SIDECAR="AGENTS.scholar.md"
 AGENTS_ZH_MD_SIDECAR="AGENTS.zh-CN.scholar.md"
 BACKUP_ROOT="$OPENCODE_DIR/.opencode-scholar-backups"
