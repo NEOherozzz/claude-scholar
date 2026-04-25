@@ -292,7 +292,7 @@ def replace_links_in_text(content: str, old_rel: str, new_rel: str | None) -> st
     if new_rel is not None:
         return common.replace_wikilinks(content, old_rel, new_rel)
 
-    old_variants = {old_rel, old_rel[:-3] if old_rel.endswith('.md') else old_rel}
+    old_variants = {old_rel, old_rel[:-3] if old_rel.endswith('.md') else old_rel, Path(old_rel).stem}
     old_title = Path(old_rel).stem.replace('-', ' ')
 
     def repl(match: Any) -> str:
@@ -350,8 +350,7 @@ def note_lifecycle(binding: common.Binding, mode: str, note: str, dest: str = ''
         shutil.move(str(source), str(target))
         target_rel = str(target.relative_to(binding.project_root)).replace(os.sep, '/')
         rewritten = rewrite_project_references(binding.project_root, source_rel, target_rel)
-        common.registry_add_or_update(binding.project_root, target_rel)
-        common.registry_remove_path(binding.project_root, source_rel, reason='renamed', record_archive=False)
+        common.registry_rename_path(binding.project_root, source_rel, target_rel)
         sync_registry(binding.project_root)
         common.update_index(binding.project_root)
         source_label = Path(source_rel).stem.replace('-', ' ')
@@ -367,13 +366,14 @@ def note_lifecycle(binding: common.Binding, mode: str, note: str, dest: str = ''
         rewritten = rewrite_project_references(binding.project_root, source_rel, archived_rel)
         common.registry_archive(binding.project_root, source_rel, archived_rel, reason=reason)
         common.update_index(binding.project_root)
-        common.prepend_recent_change(binding.project_root, f'{common.now_iso()}: archived [[{source_rel[:-3] if source_rel.endswith(".md") else source_rel}]].')
+        archived_link = archived_rel[:-3] if archived_rel.endswith('.md') else archived_rel
+        common.prepend_recent_change(binding.project_root, f'{common.now_iso()}: archived [[{archived_link}]].')
         return {'mode': mode, 'from': source_rel, 'to': archived_rel, 'rewritten_paths': rewritten}
 
     if mode == 'purge':
         source.unlink()
         rewritten = rewrite_project_references(binding.project_root, source_rel, None)
-        common.registry_remove_path(binding.project_root, source_rel, reason=reason)
+        common.registry_remove_path(binding.project_root, source_rel, reason=reason, record_archive=False)
         common.update_index(binding.project_root)
         common.prepend_recent_change(binding.project_root, f'{common.now_iso()}: purged {source_rel}.')
         return {'mode': mode, 'purged': source_rel, 'rewritten_paths': rewritten}
