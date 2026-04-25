@@ -292,7 +292,7 @@ def replace_links_in_text(content: str, old_rel: str, new_rel: str | None) -> st
     if new_rel is not None:
         return common.replace_wikilinks(content, old_rel, new_rel)
 
-    old_variants = {old_rel, old_rel[:-3] if old_rel.endswith('.md') else old_rel}
+    old_variants = {old_rel, old_rel[:-3] if old_rel.endswith('.md') else old_rel, Path(old_rel).stem}
     old_title = Path(old_rel).stem.replace('-', ' ')
 
     def repl(match: Any) -> str:
@@ -350,8 +350,7 @@ def note_lifecycle(binding: common.Binding, mode: str, note: str, dest: str = ''
         shutil.move(str(source), str(target))
         target_rel = str(target.relative_to(binding.project_root)).replace(os.sep, '/')
         rewritten = rewrite_project_references(binding.project_root, source_rel, target_rel)
-        common.registry_add_or_update(binding.project_root, target_rel)
-        common.registry_remove_path(binding.project_root, source_rel, reason='renamed', record_archive=False)
+        common.registry_rename_path(binding.project_root, source_rel, target_rel)
         sync_registry(binding.project_root)
         common.update_index(binding.project_root)
         source_label = Path(source_rel).stem.replace('-', ' ')
@@ -374,7 +373,7 @@ def note_lifecycle(binding: common.Binding, mode: str, note: str, dest: str = ''
     if mode == 'purge':
         source.unlink()
         rewritten = rewrite_project_references(binding.project_root, source_rel, None)
-        common.registry_remove_path(binding.project_root, source_rel, reason=reason)
+        common.registry_remove_path(binding.project_root, source_rel, reason=reason, record_archive=False)
         common.update_index(binding.project_root)
         common.prepend_recent_change(binding.project_root, f'{common.now_iso()}: purged {source_rel}.')
         return {'mode': mode, 'purged': source_rel, 'rewritten_paths': rewritten}

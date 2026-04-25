@@ -572,6 +572,36 @@ def registry_add_or_update(project_root: Path, rel_path: str, *, status: str | N
     return {'updated': True, 'section': section, 'path': rel_path}
 
 
+def registry_rename_path(project_root: Path, old_rel: str, new_rel: str) -> dict[str, Any]:
+    payload = section_and_row_for_relpath(new_rel)
+    if payload is None:
+        return {'updated': False, 'reason': 'path-not-registrable'}
+    new_section, new_row = payload
+    rows = parse_registry_md(registry_path(project_root))
+    old_link = wikilink(old_rel)
+    moved_row = None
+    old_section = None
+    for section in SECTION_ORDER:
+        if section == 'Archive':
+            continue
+        keep_rows = []
+        for row in rows[section]:
+            if row.get('Path') == old_link:
+                moved_row = row
+                old_section = section
+                continue
+            keep_rows.append(row)
+        rows[section] = keep_rows
+    if moved_row is None:
+        return registry_add_or_update(project_root, new_rel)
+    moved_row['Path'] = new_row['Path']
+    moved_row['Title'] = new_row.get('Title', moved_row.get('Title', Path(new_rel).stem.title()))
+    moved_row['Updated'] = new_row['Updated']
+    rows[new_section].append(moved_row)
+    write_registry(project_root, rows)
+    return {'updated': True, 'section': new_section, 'path': new_rel, 'old_section': old_section}
+
+
 def registry_archive(project_root: Path, old_rel: str, archived_rel: str, reason: str = 'archive') -> dict[str, Any]:
     rows = parse_registry_md(registry_path(project_root))
     old_link = wikilink(old_rel)
@@ -615,6 +645,16 @@ def registry_remove_path(project_root: Path, rel_path: str, reason: str = 'purge
                 continue
             keep_rows.append(row)
         rows[section] = keep_rows
+
+    archive_rows = []
+    for row in rows['Archive']:
+        if row.get('Old Path') == target or row.get('Archived Path') == target:
+            if removed_row is None:
+                removed_row = row
+            continue
+        archive_rows.append(row)
+    rows['Archive'] = archive_rows
+
     if record_archive:
         rows['Archive'].append({
             'ID': removed_row.get('ID', '') if removed_row else '',
@@ -808,7 +848,7 @@ def resolve_project_note(project_root: Path, note: str) -> Path:
 
 
 def replace_wikilinks(content: str, old_rel: str, new_rel: str | None = None) -> str:
-    old_variants = {old_rel, old_rel[:-3] if old_rel.endswith('.md') else old_rel}
+    old_variants = {old_rel, old_rel[:-3] if old_rel.endswith('.md') else old_rel, Path(old_rel).stem}
     new_target = None if new_rel is None else (new_rel[:-3] if new_rel.endswith('.md') else new_rel)
 
     def repl(match: re.Match[str]) -> str:
