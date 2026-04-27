@@ -33,6 +33,7 @@ LEGACY_INSTALL_DETECTED=0
 SKIP_PROVIDER=false
 SKIP_AUTH=false
 PERSIST_AUTH=false
+ENV_AUTH_DETECTED=0
 PROVIDER_NAME=""
 PROVIDER_URL=""
 MODEL=""
@@ -47,6 +48,33 @@ bold()   { printf "\033[1m%s\033[0m" "$1"; }
 info()   { echo -e "\033[1;34m[INFO]\033[0m $*"; }
 warn()   { echo -e "\033[1;33m[WARN]\033[0m $*"; }
 error()  { echo -e "\033[1;31m[ERROR]\033[0m $*"; exit 1; }
+
+read_prompt() {
+  local __var="$1"
+  local prompt="$2"
+  local default_value="${3:-}"
+  local silent="${4:-0}"
+  local value=""
+
+  if [ "$silent" = "1" ]; then
+    if read -rsp "$prompt" value; then
+      echo ""
+    else
+      echo ""
+      value="$default_value"
+    fi
+  else
+    if ! read -rp "$prompt" value; then
+      value="$default_value"
+    fi
+  fi
+
+  if [ -z "$value" ]; then
+    value="$default_value"
+  fi
+
+  printf -v "$__var" '%s' "$value"
+}
 
 cleanup_temp_files() {
   rm -f "$CONFIG_META_FILE" "$PREVIOUS_MANAGED_PATHS_FILE"
@@ -419,6 +447,8 @@ detect_existing_env_auth() {
   local candidate=""
   local value=""
 
+  ENV_AUTH_DETECTED=0
+
   while IFS= read -r candidate; do
     [ -n "$candidate" ] || continue
     value="${!candidate:-}"
@@ -426,12 +456,13 @@ detect_existing_env_auth() {
       AUTH_ENV_VAR_NAME="$candidate"
       API_KEY="$value"
       PERSIST_AUTH=true
+      ENV_AUTH_DETECTED=1
       info "No auth.json found; detected $candidate from environment and will persist it for Codex compatibility"
       return 0
     fi
-  done < <(collect_api_key_candidates "$provider")
+  done < <(collect_api_key_candidates "$provider") || true
 
-  return 1
+  return 0
 }
 
 check_deps() {
@@ -470,12 +501,8 @@ detect_existing() {
     info "Detected existing authentication configuration; keeping it without prompting"
   elif [ "$SKIP_PROVIDER" = true ]; then
     SKIP_AUTH=true
-    local env_auth_status=0
-    set +e
     detect_existing_env_auth "$PROVIDER_NAME"
-    env_auth_status=$?
-    set -e
-    if [ "$env_auth_status" -ne 0 ]; then
+    if [ "$ENV_AUTH_DETECTED" -ne 1 ]; then
       info "Existing Codex config detected; installer will not prompt for credentials or overwrite your current auth flow"
     fi
   fi
@@ -495,12 +522,19 @@ choose_provider() {
   echo ""
 
   local choice
-  read -rp "Enter choice [1-2] (default: 1): " choice
-  choice="${choice:-1}"
+  read_prompt choice "Enter choice [1-2] (default: 1): " "1"
+
+  case "$choice" in
+    ''|*[!0-9]*)
+      warn "Invalid provider choice '$choice'; using default: 1"
+      choice="1"
+      ;;
+  esac
 
   local idx=$((choice - 1))
   if [ "$idx" -lt 0 ] || [ "$idx" -ge "${#PRESET_NAMES[@]}" ]; then
-    error "Invalid choice: $choice"
+    warn "Invalid provider choice '$choice'; using default: 1"
+    idx=0
   fi
 
   PROVIDER_NAME="${PRESET_NAMES[$idx]}"
@@ -508,13 +542,16 @@ choose_provider() {
   MODEL="${PRESET_MODELS[$idx]}"
 
   if [ "$PROVIDER_NAME" = "custom" ]; then
-    read -rp "Provider name: " PROVIDER_NAME
-    read -rp "Base URL: " PROVIDER_URL
-    read -rp "Model name: " MODEL
+    read_prompt PROVIDER_NAME "Provider name: " ""
+    read_prompt PROVIDER_URL "Base URL: " ""
+    read_prompt MODEL "Model name: " ""
+    [ -n "$PROVIDER_NAME" ] || error "Provider name is required for custom provider."
+    [ -n "$PROVIDER_URL" ] || error "Base URL is required for custom provider."
+    [ -n "$MODEL" ] || error "Model name is required for custom provider."
   else
     echo ""
-    read -rp "Model name (default: $MODEL): " input_model
-    MODEL="${input_model:-$MODEL}"
+    read_prompt input_model "Model name (default: $MODEL): " "$MODEL"
+    MODEL="$input_model"
   fi
 
   info "Provider: $PROVIDER_NAME | URL: $PROVIDER_URL | Model: $MODEL"
@@ -526,8 +563,8 @@ configure_api_key() {
   fi
 
   echo ""
-  read -rp "API key env var name (default: $AUTH_ENV_VAR_NAME): " input_env_name
-  AUTH_ENV_VAR_NAME="${input_env_name:-$AUTH_ENV_VAR_NAME}"
+  read_prompt input_env_name "API key env var name (default: $AUTH_ENV_VAR_NAME): " "$AUTH_ENV_VAR_NAME"
+  AUTH_ENV_VAR_NAME="$input_env_name"
   validate_env_var_name "$AUTH_ENV_VAR_NAME"
 
   local env_value="${!AUTH_ENV_VAR_NAME:-}"
@@ -538,8 +575,7 @@ configure_api_key() {
     return
   fi
 
-  read -rsp "Enter API key for $AUTH_ENV_VAR_NAME (or press Enter to skip): " API_KEY
-  echo ""
+  read_prompt API_KEY "Enter API key for $AUTH_ENV_VAR_NAME (or press Enter to skip): " "" "1"
   if [ -z "$API_KEY" ]; then
     warn "No API key set. Make sure $AUTH_ENV_VAR_NAME is available in your environment."
     SKIP_AUTH=true
@@ -733,11 +769,8 @@ configure_mcp() {
 
   echo ""
   local enable_zotero=""
-  if [ -t 0 ]; then
-    if ! read -rp "Enable Zotero MCP server? [y/N]: " enable_zotero; then
-      enable_zotero=""
-    fi
-  else
+  read_prompt enable_zotero "Enable Zotero MCP server? [y/N]: " ""
+  if [ -z "$enable_zotero" ] && [ ! -t 0 ]; then
     info "Zotero MCP is available but installer is running non-interactively; leaving it disabled"
   fi
   if [ "$enable_zotero" = "y" ] || [ "$enable_zotero" = "Y" ]; then
