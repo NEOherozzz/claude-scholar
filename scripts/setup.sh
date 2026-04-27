@@ -106,7 +106,29 @@ should_adopt_existing_path() {
   if was_previously_managed "$target"; then
     return 0
   fi
+  if is_existing_scholar_agents_file "$target"; then
+    return 0
+  fi
   [ "$LEGACY_INSTALL_DETECTED" -eq 1 ]
+}
+
+is_existing_scholar_agents_file() {
+  local target="$1"
+  local rel="${target#$CODEX_HOME/}"
+  [ "$rel" = "$target" ] && return 1
+
+  case "$rel" in
+    AGENTS.md|AGENTS.zh-CN.md) ;;
+    *) return 1 ;;
+  esac
+
+  [ -f "$target" ] || return 1
+
+  # Older Codex Scholar installs may predate the install manifest. In that case
+  # the global AGENTS files are still installer-owned and should be updated in
+  # place. Keep the marker strict so genuinely custom user AGENTS files are
+  # still preserved via AGENTS.scholar.md sidecars.
+  head -n 40 "$target" | grep -Eq '^# (Codex Scholar|Claude Scholar) (Core Instructions|核心指令)$'
 }
 
 file_sha256() {
