@@ -67,7 +67,7 @@ debug_state() {
   debug "state: CODEX_HOME=$CODEX_HOME"
   debug "state: SRC_DIR=$SRC_DIR"
   debug "state: SKIP_PROVIDER=$SKIP_PROVIDER SKIP_AUTH=$SKIP_AUTH PERSIST_AUTH=$PERSIST_AUTH ENV_AUTH_DETECTED=$ENV_AUTH_DETECTED"
-  debug "state: PROVIDER_NAME=${PROVIDER_NAME:-<empty>} MODEL=${MODEL:-<empty>} AUTH_ENV_VAR_NAME=$AUTH_ENV_VAR_NAME"
+  debug "state: PROVIDER_NAME=${PROVIDER_NAME:-<empty>} MODEL=${MODEL:-<empty>}"
   debug "state: config_exists=$([ -f "$CODEX_HOME/config.toml" ] && printf yes || printf no) auth_exists=$([ -f "$CODEX_HOME/auth.json" ] && printf yes || printf no) manifest_exists=$([ -f "$MANIFEST_FILE" ] && printf yes || printf no)"
 }
 
@@ -443,16 +443,6 @@ install_agents_zh_md() {
 }
 
 # --- Auth/provider helpers ---
-mask_secret() {
-  local value="$1"
-  local length=${#value}
-  if [ "$length" -le 12 ]; then
-    printf '%s' "$value"
-    return
-  fi
-  printf '%s...%s' "${value:0:8}" "${value: -4}"
-}
-
 validate_env_var_name() {
   local name="$1"
   [[ "$name" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] || error "Invalid env var name: $name"
@@ -530,14 +520,13 @@ detect_existing_env_auth() {
 
   while IFS= read -r candidate; do
     [ -n "$candidate" ] || continue
-    debug "env-auth: checking $candidate"
     value="${!candidate:-}"
     if [ -n "$value" ]; then
       AUTH_ENV_VAR_NAME="$candidate"
       API_KEY="$value"
       PERSIST_AUTH=true
       ENV_AUTH_DETECTED=1
-      info "No auth.json found; detected $candidate from environment and will persist it for Codex compatibility"
+      info "No auth.json found; detected an API key in the environment and will persist it for Codex compatibility"
       return 0
     fi
   done < <(collect_api_key_candidates "$provider") || true
@@ -573,7 +562,7 @@ detect_existing() {
     if [ -n "$auth_entry" ]; then
       IFS=$'\t' read -r existing_key_name existing_key_value <<< "$auth_entry"
       AUTH_ENV_VAR_NAME="$existing_key_name"
-      info "Existing auth.json credential found: $AUTH_ENV_VAR_NAME=$(mask_secret "$existing_key_value")"
+      info "Existing auth.json credential found; leaving it untouched"
     else
       info "Existing auth.json found; leaving it untouched"
     fi
