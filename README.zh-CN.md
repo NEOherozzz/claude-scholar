@@ -19,8 +19,8 @@
 
 ## 最新动态
 
-- **2026-04-25**: **Codex Obsidian KB CRUD 稳定化** — 修复 Codex 项目 KB 生命周期：rename 保持稳定 registry ID，archive 只把 note 放入 Archive section，purge 会清掉 registry / index / link 残留，lint 可报告 `broken_links = 0`；Codex runtime binding 固定在 `.codex/project-memory/*`，历史命名的 `registry.yaml` 文件内容固定为 JSON。
-- **2026-04-24**: **Vault-first Obsidian KB workflow 回植到 Codex** — 将 project memory 合并为 `obsidian-project-kb-core`、`obsidian-source-ingestion`、`obsidian-literature-workflow`、`obsidian-kb-artifacts`，把论文 source 放到 `Sources/Papers/`，保留 `.codex/project-memory/*` 作为 runtime binding 层，并明确 `02-Index.md` 是人类导航页，不是 registry 镜像。
+- **2026-04-25**: **Codex Obsidian KB lifecycle 稳定化** — 修复 Codex 项目 KB workflow 中 rename、archive、purge、sync、lint 的边界问题，并让 repo-local binding metadata 与 Codex runtime 保持一致。
+- **2026-04-24**: **Vault-first Obsidian KB workflow 回植到 Codex** — 将新的 project-scoped Obsidian knowledge workflow 带到 Codex 版本，把旧的 memory skills 合并为四个核心 skill，并把项目导航改成人类优先，而不是机器 registry dump。
 - **2026-04-22**: **精简常驻核心指令与安全安装生命周期** — 将大型 always-on `CLAUDE.md` / `AGENTS.md` 改为紧凑核心指令，移除非核心默认 agents，新增中文 companion 文件，并加入基于 manifest/state 的卸载流程，确保更新和卸载只处理安装器拥有的文件与配置项。
 - **2026-04-15**: **提出 pubfig 与 pubtab 两个 Python package** — 推出了 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig)（用于论文级 scientific figures）和 [`pubtab`](https://github.com/Galaxy-Dawn/pubtab)（用于 publication-ready tables 与 Excel↔LaTeX workflows）两个独立 Python package，为研究者提供更清晰的论文图、benchmark 表、导出控制与最终 QA 生产路径。
 - **2026-04-15**: **将 publication-chart-skill 融入 Claude Scholar** — 把 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) 封装成 `publication-chart-skill`，加入仓库，并接到 Claude Scholar 的分析/写作边界里，让论文级图表工作有了明确的 handoff 路径，而不是继续混在通用分析或 prose skill 里。
