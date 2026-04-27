@@ -470,7 +470,12 @@ detect_existing() {
     info "Detected existing authentication configuration; keeping it without prompting"
   elif [ "$SKIP_PROVIDER" = true ]; then
     SKIP_AUTH=true
-    if ! detect_existing_env_auth "$PROVIDER_NAME"; then
+    local env_auth_status=0
+    set +e
+    detect_existing_env_auth "$PROVIDER_NAME"
+    env_auth_status=$?
+    set -e
+    if [ "$env_auth_status" -ne 0 ]; then
       info "Existing Codex config detected; installer will not prompt for credentials or overwrite your current auth flow"
     fi
   fi
@@ -727,7 +732,14 @@ configure_mcp() {
   fi
 
   echo ""
-  read -rp "Enable Zotero MCP server? [y/N]: " enable_zotero
+  local enable_zotero=""
+  if [ -t 0 ]; then
+    if ! read -rp "Enable Zotero MCP server? [y/N]: " enable_zotero; then
+      enable_zotero=""
+    fi
+  else
+    info "Zotero MCP is available but installer is running non-interactively; leaving it disabled"
+  fi
   if [ "$enable_zotero" = "y" ] || [ "$enable_zotero" = "Y" ]; then
     python3 - "$CODEX_HOME/config.toml" <<'PY'
 import pathlib
