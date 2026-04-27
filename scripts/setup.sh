@@ -5,7 +5,7 @@
 # Usage: bash scripts/setup.sh
 # Supports fresh install and safer incremental updates.
 
-set -euo pipefail
+set -uo pipefail
 
 CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -39,6 +39,8 @@ PROVIDER_URL=""
 MODEL=""
 AUTH_ENV_VAR_NAME="OPENAI_API_KEY"
 API_KEY=""
+SCHOLAR_DEBUG="${SCHOLAR_DEBUG:-0}"
+INSTALL_STEP=""
 
 # --- Colors ---
 green()  { printf "\033[32m%s\033[0m" "$1"; }
@@ -47,7 +49,42 @@ yellow() { printf "\033[33m%s\033[0m" "$1"; }
 bold()   { printf "\033[1m%s\033[0m" "$1"; }
 info()   { echo -e "\033[1;34m[INFO]\033[0m $*"; }
 warn()   { echo -e "\033[1;33m[WARN]\033[0m $*"; }
-error()  { echo -e "\033[1;31m[ERROR]\033[0m $*"; exit 1; }
+error()  {
+  echo -e "\033[1;31m[ERROR]\033[0m $*"
+  if [ "$SCHOLAR_DEBUG" = "1" ]; then
+    debug "error: step=${INSTALL_STEP:-none} line=${BASH_LINENO[0]:-unknown} command=${BASH_COMMAND:-unknown}"
+  fi
+  exit 1
+}
+
+debug() {
+  [ "$SCHOLAR_DEBUG" = "1" ] || return 0
+  printf '[DEBUG] %s\n' "$*" >&2
+}
+
+debug_state() {
+  [ "$SCHOLAR_DEBUG" = "1" ] || return 0
+  debug "state: CODEX_HOME=$CODEX_HOME"
+  debug "state: SRC_DIR=$SRC_DIR"
+  debug "state: SKIP_PROVIDER=$SKIP_PROVIDER SKIP_AUTH=$SKIP_AUTH PERSIST_AUTH=$PERSIST_AUTH ENV_AUTH_DETECTED=$ENV_AUTH_DETECTED"
+  debug "state: PROVIDER_NAME=${PROVIDER_NAME:-<empty>} MODEL=${MODEL:-<empty>} AUTH_ENV_VAR_NAME=$AUTH_ENV_VAR_NAME"
+  debug "state: config_exists=$([ -f "$CODEX_HOME/config.toml" ] && printf yes || printf no) auth_exists=$([ -f "$CODEX_HOME/auth.json" ] && printf yes || printf no) manifest_exists=$([ -f "$MANIFEST_FILE" ] && printf yes || printf no)"
+}
+
+run_step() {
+  local step_name="$1"
+  shift
+  INSTALL_STEP="$step_name"
+  debug "step:start $step_name command=$*"
+  debug_state
+  "$@"
+  local rc=$?
+  if [ "$rc" -ne 0 ]; then
+    error "Step failed: $step_name (exit=$rc)"
+  fi
+  debug "step:done $step_name"
+  INSTALL_STEP=""
+}
 
 read_prompt() {
   local __var="$1"
@@ -80,7 +117,16 @@ cleanup_temp_files() {
   rm -f "$CONFIG_META_FILE" "$PREVIOUS_MANAGED_PATHS_FILE"
 }
 
-trap cleanup_temp_files EXIT
+on_exit() {
+  local rc=$?
+  if [ "$SCHOLAR_DEBUG" = "1" ]; then
+    debug "exit: rc=$rc step=${INSTALL_STEP:-none} line=${LINENO} command=${BASH_COMMAND:-unknown}"
+    debug "summary: updated=$UPDATED_COUNT skipped=$SKIPPED_COUNT backups=$BACKUP_COUNT"
+  fi
+  cleanup_temp_files
+}
+
+trap on_exit EXIT
 
 # --- Presets ---
 declare -a PRESET_NAMES=("openai" "custom")
@@ -88,11 +134,38 @@ declare -a PRESET_LABELS=("OpenAI (official)" "Custom provider")
 declare -a PRESET_URLS=("https://api.openai.com/v1" "")
 declare -a PRESET_MODELS=("gpt-5.4" "")
 
+parse_args() {
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      --debug|-d)
+        SCHOLAR_DEBUG=1
+        shift
+        ;;
+      --help|-h)
+        cat <<'EOF'
+Usage: bash scripts/setup.sh [--debug]
+
+Options:
+  --debug, -d   Enable verbose phase/state logging.
+  --help, -h    Show this help.
+
+You can also enable debug with:
+  SCHOLAR_DEBUG=1 bash scripts/setup.sh
+EOF
+        exit 0
+        ;;
+      *)
+        error "Unknown argument: $1"
+        ;;
+    esac
+  done
+}
+
 load_previous_manifest() {
   if [ -f "$MANIFEST_FILE" ]; then
-    cp "$MANIFEST_FILE" "$PREVIOUS_MANAGED_PATHS_FILE"
+    cp "$MANIFEST_FILE" "$PREVIOUS_MANAGED_PATHS_FILE" || error "Failed to copy previous install manifest"
   else
-    : > "$PREVIOUS_MANAGED_PATHS_FILE"
+    : > "$PREVIOUS_MANAGED_PATHS_FILE" || error "Failed to initialize previous manifest cache"
   fi
 }
 
@@ -171,11 +244,11 @@ file_sha256() {
 }
 
 write_install_state() {
-  mkdir -p "$CODEX_HOME"
+  mkdir -p "$CODEX_HOME" || error "Failed to create CODEX_HOME at $CODEX_HOME"
   if [ "${#MANAGED_PATHS[@]}" -gt 0 ]; then
-    printf "%s\n" "${MANAGED_PATHS[@]}" | LC_ALL=C sort -u > "$MANIFEST_FILE"
+    printf "%s\n" "${MANAGED_PATHS[@]}" | LC_ALL=C sort -u > "$MANIFEST_FILE" || error "Failed to write install manifest"
   else
-    : > "$MANIFEST_FILE"
+    : > "$MANIFEST_FILE" || error "Failed to write empty install manifest"
   fi
 
   local managed_paths_file agents_targets_file
@@ -183,15 +256,15 @@ write_install_state() {
   agents_targets_file="$(mktemp)"
 
   if [ "${#MANAGED_PATHS[@]}" -gt 0 ]; then
-    printf "%s\n" "${MANAGED_PATHS[@]}" | LC_ALL=C sort -u > "$managed_paths_file"
+    printf "%s\n" "${MANAGED_PATHS[@]}" | LC_ALL=C sort -u > "$managed_paths_file" || error "Failed to write managed paths temp file"
   else
-    : > "$managed_paths_file"
+    : > "$managed_paths_file" || error "Failed to write managed paths temp file"
   fi
 
   if [ "${#AGENTS_TARGETS[@]}" -gt 0 ]; then
-    printf "%s\n" "${AGENTS_TARGETS[@]}" | LC_ALL=C sort -u > "$agents_targets_file"
+    printf "%s\n" "${AGENTS_TARGETS[@]}" | LC_ALL=C sort -u > "$agents_targets_file" || error "Failed to write agents targets temp file"
   else
-    : > "$agents_targets_file"
+    : > "$agents_targets_file" || error "Failed to write agents targets temp file"
   fi
 
   CODEX_STATE_FILE="$STATE_FILE" \
@@ -230,13 +303,14 @@ const state = {
 
 fs.writeFileSync(process.env.CODEX_STATE_FILE, JSON.stringify(state, null, 2) + '\n');
 NODE
-
+  local node_rc=$?
   rm -f "$managed_paths_file" "$agents_targets_file"
+  [ "$node_rc" -eq 0 ] || error "Failed to write install state"
 }
 
 ensure_backup_dir() {
   if [ "$BACKUP_READY" -eq 0 ]; then
-    mkdir -p "$BACKUP_DIR"
+    mkdir -p "$BACKUP_DIR" || error "Failed to create backup directory $BACKUP_DIR"
     BACKUP_READY=1
     info "Backup directory: $BACKUP_DIR"
   fi
@@ -253,12 +327,13 @@ backup_path() {
     rel="$(basename "$target")"
   fi
 
-  mkdir -p "$BACKUP_DIR/$(dirname "$rel")"
+  mkdir -p "$BACKUP_DIR/$(dirname "$rel")" || error "Failed to create backup parent for $rel"
   if [ -d "$target" ]; then
-    cp -R "$target" "$BACKUP_DIR/$rel"
+    cp -R "$target" "$BACKUP_DIR/$rel" || error "Failed to back up directory $target"
   else
-    cp -p "$target" "$BACKUP_DIR/$rel"
+    cp -p "$target" "$BACKUP_DIR/$rel" || error "Failed to back up file $target"
   fi
+  debug "backup: ${target#$CODEX_HOME/} -> $BACKUP_DIR/$rel"
   BACKUP_COUNT=$((BACKUP_COUNT + 1))
 }
 
@@ -269,10 +344,10 @@ ensure_parent_dir() {
 
   if [ -e "$parent_dir" ] && [ ! -d "$parent_dir" ]; then
     backup_path "$parent_dir"
-    rm -f "$parent_dir"
+    rm -f "$parent_dir" || error "Failed to remove non-directory parent $parent_dir"
   fi
 
-  mkdir -p "$parent_dir"
+  mkdir -p "$parent_dir" || error "Failed to create parent directory $parent_dir"
 }
 
 copy_file_safely() {
@@ -285,16 +360,20 @@ copy_file_safely() {
     if should_adopt_existing_path "$target_file"; then
       record_managed_path "$target_file"
     fi
+    debug "copy:skip unchanged ${target_file#$CODEX_HOME/}"
     SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
     return 0
   fi
 
   if [ -e "$target_file" ]; then
     backup_path "$target_file"
-    [ -d "$target_file" ] && rm -rf "$target_file"
+    if [ -d "$target_file" ]; then
+      rm -rf "$target_file" || error "Failed to remove directory target $target_file"
+    fi
   fi
 
-  cp -p "$src_file" "$target_file"
+  cp -p "$src_file" "$target_file" || error "Failed to copy $src_file to $target_file"
+  debug "copy:update ${target_file#$CODEX_HOME/}"
   record_managed_path "$target_file"
   UPDATED_COUNT=$((UPDATED_COUNT + 1))
 }
@@ -305,10 +384,10 @@ copy_dir_safely() {
 
   if [ -e "$target_dir" ] && [ ! -d "$target_dir" ]; then
     backup_path "$target_dir"
-    rm -f "$target_dir"
+    rm -f "$target_dir" || error "Failed to remove non-directory target $target_dir"
   fi
   ensure_parent_dir "$target_dir/.dir"
-  mkdir -p "$target_dir"
+  mkdir -p "$target_dir" || error "Failed to create target directory $target_dir"
 
   while IFS= read -r -d '' src_file; do
     local rel="${src_file#$src_dir/}"
@@ -451,6 +530,7 @@ detect_existing_env_auth() {
 
   while IFS= read -r candidate; do
     [ -n "$candidate" ] || continue
+    debug "env-auth: checking $candidate"
     value="${!candidate:-}"
     if [ -n "$value" ]; then
       AUTH_ENV_VAR_NAME="$candidate"
@@ -506,6 +586,7 @@ detect_existing() {
       info "Existing Codex config detected; installer will not prompt for credentials or overwrite your current auth flow"
     fi
   fi
+  debug "detect_existing: complete"
 }
 
 choose_provider() {
@@ -592,7 +673,7 @@ generate_fresh_config() {
   sed -e "s|__MODEL__|$MODEL|g" \
       -e "s|__PROVIDER_NAME__|$PROVIDER_NAME|g" \
       -e "s|__PROVIDER_URL__|$PROVIDER_URL|g" \
-      "$template" > "$target"
+      "$template" > "$target" || error "Failed to render config.toml from template"
   CONFIG_CREATED=1
   CONFIG_SHA256="$(file_sha256 "$target")"
   CODEX_CONFIG_TEMPLATE="$target" CODEX_CONFIG_META_FILE="$CONFIG_META_FILE" python3 <<'PY'
@@ -608,6 +689,7 @@ pathlib.Path(os.environ["CODEX_CONFIG_META_FILE"]).write_text(json.dumps({
     "addedSections": sections,
 }, indent=2) + "\n")
 PY
+  [ "$?" -eq 0 ] || error "Failed to write config metadata"
   info "Generated config.toml (model=$MODEL, provider=$PROVIDER_NAME)"
 }
 
@@ -658,6 +740,7 @@ for block in extract_agent_sections(template):
 pathlib.Path(target_path).write_text(target.rstrip() + '\n')
 print(','.join(added))
 PY
+  return $?
 }
 
 generate_config() {
@@ -668,13 +751,13 @@ generate_config() {
 
   if [ -f "$target" ]; then
     backup_path "$target"
-    cp "$target" "${target}.bak"
+    cp "$target" "${target}.bak" || error "Failed to write config.toml.bak"
     info "Backed up config.toml → config.toml.bak"
   fi
 
   if [ "$SKIP_PROVIDER" = true ]; then
     local added
-    added=$(merge_scholar_config "$target" "$template")
+    added=$(merge_scholar_config "$target" "$template") || error "Failed to merge Scholar config sections"
     ADDED_CONFIG_SECTIONS="$added" CODEX_CONFIG_META_FILE="$CONFIG_META_FILE" python3 <<'PY'
 import json
 import os
@@ -686,6 +769,7 @@ pathlib.Path(os.environ["CODEX_CONFIG_META_FILE"]).write_text(json.dumps({
     "addedSections": sections,
 }, indent=2) + "\n")
 PY
+    [ "$?" -eq 0 ] || error "Failed to write config metadata"
     CONFIG_SHA256="$(file_sha256 "$target")"
     if [ -n "$added" ]; then
       info "Merged Scholar sections into existing config.toml: $added"
@@ -705,7 +789,7 @@ write_auth() {
   local target="$CODEX_HOME/auth.json"
   if [ -f "$target" ]; then
     backup_path "$target"
-    cp "$target" "${target}.bak"
+    cp "$target" "${target}.bak" || error "Failed to write auth.json.bak"
     info "Backed up auth.json → auth.json.bak"
   fi
   python3 - "$target" "$AUTH_ENV_VAR_NAME" "$API_KEY" <<'PY'
@@ -723,7 +807,8 @@ if env_name != "OPENAI_API_KEY":
 
 target.write_text(json.dumps(payload, indent=2) + "\n")
 PY
-  chmod 600 "$target"
+  [ "$?" -eq 0 ] || error "Failed to write auth.json"
+  chmod 600 "$target" || error "Failed to set auth.json permissions"
   if [ "$AUTH_ENV_VAR_NAME" = "OPENAI_API_KEY" ]; then
     info "Wrote auth.json (permissions: 600)"
   else
@@ -783,6 +868,7 @@ text = path.read_text()
 text = re.sub(r'(\[mcp_servers\.zotero\]\n(?:.*\n)*?enabled = )false', r'\1true', text, count=1)
 path.write_text(text)
 PY
+    [ "$?" -eq 0 ] || error "Failed to enable Zotero MCP"
     info "Zotero MCP enabled"
     if ! command -v zotero-mcp >/dev/null 2>&1; then
       warn "zotero-mcp not found. Install latest with: uv tool install --reinstall git+https://github.com/Galaxy-Dawn/zotero-mcp.git"
@@ -791,28 +877,29 @@ PY
 }
 
 main() {
+  parse_args "$@"
   echo ""
   echo "╔══════════════════════════════════════╗"
   echo "║   Claude Scholar Installer (Codex)   ║"
   echo "╚══════════════════════════════════════╝"
   echo ""
 
-  check_deps
-  load_previous_manifest
-  detect_legacy_install
+  run_step "check_deps" check_deps
+  run_step "load_previous_manifest" load_previous_manifest
+  run_step "detect_legacy_install" detect_legacy_install
 
   info "Source: $SRC_DIR"
   info "Target: $CODEX_HOME"
-  mkdir -p "$CODEX_HOME"
+  mkdir -p "$CODEX_HOME" || error "Failed to create CODEX_HOME at $CODEX_HOME"
 
-  detect_existing
-  choose_provider
-  configure_api_key
-  generate_config
-  write_auth
-  copy_components
-  configure_mcp
-  write_install_state
+  run_step "detect_existing" detect_existing
+  run_step "choose_provider" choose_provider
+  run_step "configure_api_key" configure_api_key
+  run_step "generate_config" generate_config
+  run_step "write_auth" write_auth
+  run_step "copy_components" copy_components
+  run_step "configure_mcp" configure_mcp
+  run_step "write_install_state" write_install_state
 
   echo ""
   echo "============================================================"
