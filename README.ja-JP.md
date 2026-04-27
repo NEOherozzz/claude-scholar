@@ -21,8 +21,8 @@
 
 ## 最新ニュース
 
-- **2026-04-25**: **OpenCode Obsidian KB CRUD を安定化** — OpenCode の project KB lifecycle を修正し、rename では registry ID を安定保持し、archive は note を Archive section のみに移し、purge は registry / index / link の残留を削除し、lint で `broken_links = 0` を確認できるようにしました。OpenCode runtime binding は `.opencode/project-memory/*` に残し、`/kb-*` commands を主入口にしました。
-- **2026-04-24**: **Vault-first Obsidian KB workflow を OpenCode へ移植** — project memory を `obsidian-project-kb-core`、`obsidian-source-ingestion`、`obsidian-literature-workflow`、`obsidian-kb-artifacts` に統合し、paper source を `Sources/Papers/` 配下へ移し、`.opencode/project-memory/*` を runtime binding layer として残し、旧 `/obsidian-*` command aliases を復元し、`02-Index.md` を registry mirror ではなく人間向け navigation page として定義しました。
+- **2026-04-25**: **OpenCode Obsidian KB lifecycle を安定化** — OpenCode の project KB workflow で rename、archive、purge、sync、lint の edge cases を修正し、`/kb-*` commands を主入口にしました。
+- **2026-04-24**: **Vault-first Obsidian KB workflow を OpenCode へ移植** — 新しい project-scoped Obsidian knowledge workflow を OpenCode edition に取り込み、旧 memory skills を 4 つの focused skills に統合し、旧 `/obsidian-*` command aliases を compatibility layer として残しました。
 - **2026-04-22**: **軽量コア指示と安全なインストール lifecycle** — 大きな always-on `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、非中核の default agents を削除し、中国語 companion ファイルを追加しました。さらに manifest/state ベースのアンインストールを追加し、更新と削除がインストーラー所有のファイルと設定項目だけを扱うようにしました。
 - **2026-04-15**: **pubfig と pubtab という 2 つの Python package を導入** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) を論文品質の scientific figures 向け Python package、[`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を publication-ready な tables と Excel↔LaTeX workflows 向け Python package として打ち出し、論文図、benchmark 表、書き出し制御、最終 QA までの生産経路をより明確にしました。
 - **2026-04-15**: **publication-chart-skill を Claude Scholar に統合** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を `publication-chart-skill` としてまとめてリポジトリに追加し、Claude Scholar の分析/執筆スタックの boundary に接続しました。これにより、論文品質の図表作業を汎用分析や prose skill に混ぜず、明示的な handoff で扱えるようになりました。
