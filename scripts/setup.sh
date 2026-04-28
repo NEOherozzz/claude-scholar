@@ -296,29 +296,32 @@ write_config_meta() {
   } > "$CONFIG_META_FILE" || error "Failed to write config metadata"
 }
 
+write_unique_lines() {
+  local target="$1"
+  shift
+
+  if [ "$#" -gt 0 ]; then
+    printf "%s\n" "$@" | awk 'NF && !seen[$0]++' > "$target" || return 1
+  else
+    : > "$target" || return 1
+  fi
+}
+
+join_lines_csv() {
+  awk 'BEGIN { first = 1 } NF { if (!first) printf ","; printf "%s", $0; first = 0 }'
+}
+
 write_install_state() {
   mkdir -p "$CODEX_HOME" || error "Failed to create CODEX_HOME at $CODEX_HOME"
-  if [ "${#MANAGED_PATHS[@]}" -gt 0 ]; then
-    printf "%s\n" "${MANAGED_PATHS[@]}" | LC_ALL=C sort -u > "$MANIFEST_FILE" || error "Failed to write install manifest"
-  else
-    : > "$MANIFEST_FILE" || error "Failed to write empty install manifest"
-  fi
+  write_unique_lines "$MANIFEST_FILE" "${MANAGED_PATHS[@]}" || error "Failed to write install manifest"
 
   local managed_paths_file agents_targets_file
   managed_paths_file="$(mktemp)"
   agents_targets_file="$(mktemp)"
 
-  if [ "${#MANAGED_PATHS[@]}" -gt 0 ]; then
-    printf "%s\n" "${MANAGED_PATHS[@]}" | LC_ALL=C sort -u > "$managed_paths_file" || error "Failed to write managed paths temp file"
-  else
-    : > "$managed_paths_file" || error "Failed to write managed paths temp file"
-  fi
+  write_unique_lines "$managed_paths_file" "${MANAGED_PATHS[@]}" || error "Failed to write managed paths temp file"
 
-  if [ "${#AGENTS_TARGETS[@]}" -gt 0 ]; then
-    printf "%s\n" "${AGENTS_TARGETS[@]}" | LC_ALL=C sort -u > "$agents_targets_file" || error "Failed to write agents targets temp file"
-  else
-    : > "$agents_targets_file" || error "Failed to write agents targets temp file"
-  fi
+  write_unique_lines "$agents_targets_file" "${AGENTS_TARGETS[@]}" || error "Failed to write agents targets temp file"
 
   CODEX_STATE_FILE="$(normalize_host_path "$STATE_FILE")" \
   CODEX_CONFIG_META_FILE="$(normalize_host_path "$CONFIG_META_FILE")" \
@@ -729,7 +732,7 @@ generate_fresh_config() {
           print substr(line, 2, length(line) - 2)
         }
       }
-    ' "$target" | awk 'BEGIN { first = 1 } { if (!first) printf ","; printf "%s", $0; first = 0 }'
+    ' "$target" | join_lines_csv
   )" || error "Failed to collect config metadata"
   write_config_meta true "$sections"
   info "Generated config.toml (model=$MODEL, provider=$PROVIDER_NAME)"
@@ -795,7 +798,7 @@ merge_scholar_config() {
   )
 
   if [ -s "$added_file" ]; then
-    paste -sd, "$added_file"
+    join_lines_csv < "$added_file"
   fi
   rm -f "$added_file"
 }
