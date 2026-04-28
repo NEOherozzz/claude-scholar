@@ -252,6 +252,36 @@ file_sha256() {
   fi
 }
 
+write_config_meta() {
+  local config_created="$1"
+  local sections_csv="$2"
+  local created_json="false"
+  local first=1
+  local section=""
+
+  if [ "$config_created" = "true" ]; then
+    created_json="true"
+  fi
+
+  {
+    printf '{\n'
+    printf '  "configCreated": %s,\n' "$created_json"
+    printf '  "addedSections": ['
+    local IFS=','
+    for section in $sections_csv; do
+      [ -n "$section" ] || continue
+      if [ "$first" -eq 1 ]; then
+        first=0
+      else
+        printf ', '
+      fi
+      printf '"%s"' "$section"
+    done
+    printf ']\n'
+    printf '}\n'
+  } > "$CONFIG_META_FILE" || error "Failed to write config metadata"
+}
+
 write_install_state() {
   mkdir -p "$CODEX_HOME" || error "Failed to create CODEX_HOME at $CODEX_HOME"
   if [ "${#MANAGED_PATHS[@]}" -gt 0 ]; then
@@ -667,6 +697,7 @@ configure_api_key() {
 generate_fresh_config() {
   local template="$1"
   local target="$2"
+  local sections=""
 
   sed -e "s|__MODEL__|$MODEL|g" \
       -e "s|__PROVIDER_NAME__|$PROVIDER_NAME|g" \
@@ -674,20 +705,18 @@ generate_fresh_config() {
       "$template" > "$target" || error "Failed to render config.toml from template"
   CONFIG_CREATED=1
   CONFIG_SHA256="$(file_sha256 "$target")"
-  CODEX_CONFIG_TEMPLATE="$(normalize_host_path "$target")" CODEX_CONFIG_META_FILE="$(normalize_host_path "$CONFIG_META_FILE")" python3 <<'PY'
-import pathlib
-import re
-import json
-import os
-
-text = pathlib.Path(os.environ["CODEX_CONFIG_TEMPLATE"]).read_text()
-sections = re.findall(r"^\[([^\]]+)\]", text, flags=re.M)
-pathlib.Path(os.environ["CODEX_CONFIG_META_FILE"]).write_text(json.dumps({
-    "configCreated": True,
-    "addedSections": sections,
-}, indent=2) + "\n")
-PY
-  [ "$?" -eq 0 ] || error "Failed to write config metadata"
+  sections="$(
+    awk '
+      {
+        line = $0
+        sub(/\r$/, "", line)
+        if (line ~ /^\[[^]]+\]$/) {
+          print substr(line, 2, length(line) - 2)
+        }
+      }
+    ' "$target" | awk 'BEGIN { first = 1 } { if (!first) printf ","; printf "%s", $0; first = 0 }'
+  )" || error "Failed to collect config metadata"
+  write_config_meta true "$sections"
   info "Generated config.toml (model=$MODEL, provider=$PROVIDER_NAME)"
 }
 
@@ -771,18 +800,7 @@ generate_config() {
   if [ "$SKIP_PROVIDER" = true ]; then
     local added
     added=$(merge_scholar_config "$target" "$template") || error "Failed to merge Scholar config sections"
-    ADDED_CONFIG_SECTIONS="$added" CODEX_CONFIG_META_FILE="$(normalize_host_path "$CONFIG_META_FILE")" python3 <<'PY'
-import json
-import os
-import pathlib
-
-sections = [item for item in os.environ.get("ADDED_CONFIG_SECTIONS", "").split(",") if item]
-pathlib.Path(os.environ["CODEX_CONFIG_META_FILE"]).write_text(json.dumps({
-    "configCreated": False,
-    "addedSections": sections,
-}, indent=2) + "\n")
-PY
-    [ "$?" -eq 0 ] || error "Failed to write config metadata"
+    write_config_meta false "$added"
     CONFIG_SHA256="$(file_sha256 "$target")"
     if [ -n "$added" ]; then
       info "Merged Scholar sections into existing config.toml: $added"
