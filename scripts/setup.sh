@@ -694,61 +694,66 @@ PY
 merge_scholar_config() {
   local target="$1"
   local template="$2"
+  local added_file
+  added_file="$(mktemp)"
 
-TARGET_PATH="$(normalize_host_path "$target")" TEMPLATE_PATH="$(normalize_host_path "$template")" python3 <<'PY'
-import os
-import pathlib
-import re
-import sys
+  append_template_section() {
+    local header="$1"
+    local block=""
 
+    if grep -Fq "[$header]" "$target"; then
+      return 0
+    fi
 
-def read(path: str) -> str:
-    # Normalize CRLF/LF differences so section extraction behaves the same
-    # on Windows Git Bash and Unix checkouts.
-    return pathlib.Path(path).read_text(encoding='utf-8').replace('\r\n', '\n')
+    block="$(
+      awk -v wanted="[$header]" '
+        {
+          line = $0
+          sub(/\r$/, "", line)
+        }
+        line == wanted {
+          capture = 1
+          print line
+          next
+        }
+        capture && line ~ /^\[/ {
+          exit
+        }
+        capture {
+          print line
+        }
+      ' "$template"
+    )"
 
+    if [ -n "$block" ]; then
+      printf '\n\n%s\n' "$block" >> "$target" || return 1
+      printf '%s\n' "$header" >> "$added_file" || return 1
+    fi
+  }
 
-def extract_section_block(text: str, header: str) -> str:
-    pattern = rf"(^\[{re.escape(header)}\]\n(?:.*\n)*?)(?=^\[|\Z)"
-    m = re.search(pattern, text, flags=re.M)
-    return m.group(1).rstrip() if m else ""
+  append_template_section "features" || return 1
+  append_template_section "mcp_servers.zotero" || return 1
+  append_template_section "mcp_servers.zotero.env" || return 1
 
+  while IFS= read -r header; do
+    [ -n "$header" ] || continue
+    append_template_section "$header" || return 1
+  done < <(
+    awk '
+      {
+        line = $0
+        sub(/\r$/, "", line)
+        if (line ~ /^\[agents\.[^]]+\]$/) {
+          print substr(line, 2, length(line) - 2)
+        }
+      }
+    ' "$template"
+  )
 
-def extract_agent_sections(text: str):
-    pattern = r"(^\[agents\.[^\]]+\]\n(?:.*\n)*?)(?=^\[|\Z)"
-    return re.findall(pattern, text, flags=re.M)
-
-
-target_path = os.environ['TARGET_PATH']
-template_path = os.environ['TEMPLATE_PATH']
-target = read(target_path)
-template = read(template_path)
-added = []
-
-for section in ['features', 'mcp_servers.zotero', 'mcp_servers.zotero.env']:
-    if f'[{section}]' not in target:
-        block = extract_section_block(template, section)
-        if block:
-            target += '\n\n' + block + '\n'
-            added.append(section)
-
-for block in extract_agent_sections(template):
-    first_line = block.splitlines()[0].strip()
-    if not (first_line.startswith('[') and first_line.endswith(']')):
-        raise RuntimeError(f"Invalid agent section header: {first_line!r}")
-    header = first_line[1:-1]
-    if f'[{header}]' not in target:
-        target += '\n\n' + block.rstrip() + '\n'
-        added.append(header)
-
-pathlib.Path(target_path).write_text(target.rstrip() + '\n')
-print(','.join(added))
-PY
-  status=$?
-  if [ "$status" -ne 0 ]; then
-    echo "[DEBUG] merge_scholar_config: python merge helper failed" >&2
+  if [ -s "$added_file" ]; then
+    paste -sd, "$added_file"
   fi
-  return "$status"
+  rm -f "$added_file"
 }
 
 generate_config() {
