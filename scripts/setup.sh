@@ -41,6 +41,7 @@ AUTH_ENV_VAR_NAME="OPENAI_API_KEY"
 API_KEY=""
 SCHOLAR_DEBUG="${SCHOLAR_DEBUG:-0}"
 INSTALL_STEP=""
+FIND_CMD=""
 
 # --- Colors ---
 green()  { printf "\033[32m%s\033[0m" "$1"; }
@@ -93,6 +94,19 @@ normalize_host_path() {
   else
     printf '%s' "$path_value"
   fi
+}
+
+select_find_cmd() {
+  if [ -x /usr/bin/find ]; then
+    FIND_CMD="/usr/bin/find"
+  elif command -v gfind >/dev/null 2>&1; then
+    FIND_CMD="$(command -v gfind)"
+  elif find . -maxdepth 0 -print0 >/dev/null 2>&1; then
+    FIND_CMD="$(command -v find)"
+  else
+    error "A Unix-compatible find command is required."
+  fi
+  debug "using find command: $FIND_CMD"
 }
 
 read_prompt() {
@@ -432,7 +446,7 @@ copy_dir_safely() {
     local rel="${src_file#$src_dir/}"
     local target_file="$target_dir/$rel"
     copy_file_safely "$src_file" "$target_file"
-  done < <(find "$src_dir" -type f -print0)
+  done < <("$FIND_CMD" "$src_dir" -type f -print0)
 }
 
 install_agents_md() {
@@ -576,6 +590,7 @@ detect_existing_env_auth() {
 check_deps() {
   command -v git >/dev/null || error "Git is required."
   command -v python3 >/dev/null || error "Python 3 is required."
+  select_find_cmd
   if ! command -v codex >/dev/null; then
     warn "Codex CLI not found. Install: npm i -g @openai/codex"
   fi
@@ -890,16 +905,32 @@ configure_mcp() {
     info "Zotero MCP is available but installer is running non-interactively; leaving it disabled"
   fi
   if [ "$enable_zotero" = "y" ] || [ "$enable_zotero" = "Y" ]; then
-    python3 - "$(normalize_host_path "$CODEX_HOME/config.toml")" <<'PY'
-import pathlib
-import re
-import sys
-path = pathlib.Path(sys.argv[1])
-text = path.read_text()
-text = re.sub(r'(\[mcp_servers\.zotero\]\n(?:.*\n)*?enabled = )false', r'\1true', text, count=1)
-path.write_text(text)
-PY
-    [ "$?" -eq 0 ] || error "Failed to enable Zotero MCP"
+    local tmp_config
+    tmp_config="$(mktemp)"
+    awk '
+      {
+        line = $0
+        clean = line
+        sub(/\r$/, "", clean)
+        if (clean ~ /^\[/) {
+          in_zotero = (clean == "[mcp_servers.zotero]")
+        }
+        if (in_zotero && clean ~ /^enabled[[:space:]]*=[[:space:]]*false[[:space:]]*$/) {
+          sub(/false/, "true", line)
+          changed = 1
+        }
+        print line
+      }
+      END {
+        if (!changed) {
+          exit 1
+        }
+      }
+    ' "$CODEX_HOME/config.toml" > "$tmp_config" || {
+      rm -f "$tmp_config"
+      error "Failed to enable Zotero MCP"
+    }
+    mv "$tmp_config" "$CODEX_HOME/config.toml" || error "Failed to replace config.toml after enabling Zotero MCP"
     info "Zotero MCP enabled"
     if ! command -v zotero-mcp >/dev/null 2>&1; then
       warn "zotero-mcp not found. Install latest with: uv tool install --reinstall git+https://github.com/Galaxy-Dawn/zotero-mcp.git"
