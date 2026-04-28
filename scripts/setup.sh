@@ -690,10 +690,13 @@ TARGET_PATH="$target" TEMPLATE_PATH="$template" python3 <<'PY'
 import os
 import pathlib
 import re
+import sys
 
 
 def read(path: str) -> str:
-    return pathlib.Path(path).read_text()
+    # Normalize CRLF/LF differences so section extraction behaves the same
+    # on Windows Git Bash and Unix checkouts.
+    return pathlib.Path(path).read_text(encoding='utf-8').replace('\r\n', '\n')
 
 
 def extract_section_block(text: str, header: str) -> str:
@@ -721,7 +724,10 @@ for section in ['features', 'mcp_servers.zotero', 'mcp_servers.zotero.env']:
             added.append(section)
 
 for block in extract_agent_sections(template):
-    header = re.search(r'^\[(agents\.[^\]]+)\]$', block, flags=re.M).group(1)
+    first_line = block.splitlines()[0].strip()
+    if not (first_line.startswith('[') and first_line.endswith(']')):
+        raise RuntimeError(f"Invalid agent section header: {first_line!r}")
+    header = first_line[1:-1]
     if f'[{header}]' not in target:
         target += '\n\n' + block.rstrip() + '\n'
         added.append(header)
@@ -729,7 +735,11 @@ for block in extract_agent_sections(template):
 pathlib.Path(target_path).write_text(target.rstrip() + '\n')
 print(','.join(added))
 PY
-  return $?
+  status=$?
+  if [ "$status" -ne 0 ]; then
+    echo "[DEBUG] merge_scholar_config: python merge helper failed" >&2
+  fi
+  return "$status"
 }
 
 generate_config() {
