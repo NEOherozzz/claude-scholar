@@ -86,6 +86,15 @@ run_step() {
   INSTALL_STEP=""
 }
 
+normalize_host_path() {
+  local path_value="$1"
+  if command -v cygpath >/dev/null 2>&1; then
+    cygpath -m "$path_value"
+  else
+    printf '%s' "$path_value"
+  fi
+}
+
 read_prompt() {
   local __var="$1"
   local prompt="$2"
@@ -267,15 +276,15 @@ write_install_state() {
     : > "$agents_targets_file" || error "Failed to write agents targets temp file"
   fi
 
-  CODEX_STATE_FILE="$STATE_FILE" \
-  CODEX_CONFIG_META_FILE="$CONFIG_META_FILE" \
-  CODEX_MANAGED_PATHS_FILE="$managed_paths_file" \
-  CODEX_AGENTS_TARGETS_FILE="$agents_targets_file" \
+  CODEX_STATE_FILE="$(normalize_host_path "$STATE_FILE")" \
+  CODEX_CONFIG_META_FILE="$(normalize_host_path "$CONFIG_META_FILE")" \
+  CODEX_MANAGED_PATHS_FILE="$(normalize_host_path "$managed_paths_file")" \
+  CODEX_AGENTS_TARGETS_FILE="$(normalize_host_path "$agents_targets_file")" \
   CODEX_INSTALLED_AT="$BACKUP_STAMP" \
-  CODEX_SOURCE_DIR="$SRC_DIR" \
+  CODEX_SOURCE_DIR="$(normalize_host_path "$SRC_DIR")" \
   CODEX_CONFIG_CREATED="$CONFIG_CREATED" \
   CODEX_CONFIG_SHA256="$CONFIG_SHA256" \
-  CODEX_BACKUP_DIR="$BACKUP_DIR" \
+  CODEX_BACKUP_DIR="$(normalize_host_path "$BACKUP_DIR")" \
   CODEX_BACKUP_READY="$BACKUP_READY" \
   node <<'NODE'
 const fs = require('fs');
@@ -452,7 +461,7 @@ read_auth_entry() {
   local file="$1"
   [ -f "$file" ] || return 0
 
-  python3 - "$file" <<'PY'
+  python3 - "$(normalize_host_path "$file")" <<'PY'
 import json
 import pathlib
 import sys
@@ -665,7 +674,7 @@ generate_fresh_config() {
       "$template" > "$target" || error "Failed to render config.toml from template"
   CONFIG_CREATED=1
   CONFIG_SHA256="$(file_sha256 "$target")"
-  CODEX_CONFIG_TEMPLATE="$target" CODEX_CONFIG_META_FILE="$CONFIG_META_FILE" python3 <<'PY'
+  CODEX_CONFIG_TEMPLATE="$(normalize_host_path "$target")" CODEX_CONFIG_META_FILE="$(normalize_host_path "$CONFIG_META_FILE")" python3 <<'PY'
 import pathlib
 import re
 import json
@@ -686,7 +695,7 @@ merge_scholar_config() {
   local target="$1"
   local template="$2"
 
-TARGET_PATH="$target" TEMPLATE_PATH="$template" python3 <<'PY'
+TARGET_PATH="$(normalize_host_path "$target")" TEMPLATE_PATH="$(normalize_host_path "$template")" python3 <<'PY'
 import os
 import pathlib
 import re
@@ -757,7 +766,7 @@ generate_config() {
   if [ "$SKIP_PROVIDER" = true ]; then
     local added
     added=$(merge_scholar_config "$target" "$template") || error "Failed to merge Scholar config sections"
-    ADDED_CONFIG_SECTIONS="$added" CODEX_CONFIG_META_FILE="$CONFIG_META_FILE" python3 <<'PY'
+    ADDED_CONFIG_SECTIONS="$added" CODEX_CONFIG_META_FILE="$(normalize_host_path "$CONFIG_META_FILE")" python3 <<'PY'
 import json
 import os
 import pathlib
@@ -791,7 +800,7 @@ write_auth() {
     cp "$target" "${target}.bak" || error "Failed to write auth.json.bak"
     info "Backed up auth.json → auth.json.bak"
   fi
-  python3 - "$target" "$AUTH_ENV_VAR_NAME" "$API_KEY" <<'PY'
+  python3 - "$(normalize_host_path "$target")" "$AUTH_ENV_VAR_NAME" "$API_KEY" <<'PY'
 import json
 import pathlib
 import sys
@@ -858,7 +867,7 @@ configure_mcp() {
     info "Zotero MCP is available but installer is running non-interactively; leaving it disabled"
   fi
   if [ "$enable_zotero" = "y" ] || [ "$enable_zotero" = "Y" ]; then
-    python3 - "$CODEX_HOME/config.toml" <<'PY'
+    python3 - "$(normalize_host_path "$CODEX_HOME/config.toml")" <<'PY'
 import pathlib
 import re
 import sys
