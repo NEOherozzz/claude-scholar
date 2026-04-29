@@ -53,7 +53,7 @@ warn()   { echo -e "\033[1;33m[WARN]\033[0m $*"; }
 error()  {
   echo -e "\033[1;31m[ERROR]\033[0m $*"
   if [ "$SCHOLAR_DEBUG" = "1" ]; then
-    debug "error: step=${INSTALL_STEP:-none} line=${BASH_LINENO[0]:-unknown} command=${BASH_COMMAND:-unknown}"
+    debug "error: step=${INSTALL_STEP:-none} line=${BASH_LINENO[0]:-unknown}"
   fi
   exit 1
 }
@@ -76,7 +76,7 @@ run_step() {
   local step_name="$1"
   shift
   INSTALL_STEP="$step_name"
-  debug "step:start $step_name command=$*"
+  debug "step:start $step_name"
   debug_state
   "$@"
   local rc=$?
@@ -143,7 +143,7 @@ cleanup_temp_files() {
 on_exit() {
   local rc=$?
   if [ "$SCHOLAR_DEBUG" = "1" ]; then
-    debug "exit: rc=$rc step=${INSTALL_STEP:-none} line=${LINENO} command=${BASH_COMMAND:-unknown}"
+    debug "exit: rc=$rc step=${INSTALL_STEP:-none} line=${LINENO}"
     debug "summary: updated=$UPDATED_COUNT skipped=$SKIPPED_COUNT backups=$BACKUP_COUNT"
   fi
   cleanup_temp_files
