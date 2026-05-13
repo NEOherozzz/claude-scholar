@@ -433,7 +433,7 @@ Use Obsidian as the project-scoped durable knowledge surface, not just as a note
 - ingest new source material into the correct canonical destination,
 - only generate extra Bases or canvases on explicit request.
 
-Legacy Codex-era skill names such as `obsidian-project-memory`, `obsidian-project-bootstrap`, and `obsidian-experiment-log` remain as compatibility shims for one transition window. They should forward users toward the new KB-core workflow instead of restoring the old layout.
+Legacy Codex-era Obsidian skill shims such as `obsidian-project-memory`, `obsidian-project-bootstrap`, and `obsidian-experiment-log` have been removed. Use `obsidian-project-kb-core`, `obsidian-source-ingestion`, `obsidian-literature-workflow`, and `obsidian-kb-artifacts` directly.
 
 **Note language configuration**
 

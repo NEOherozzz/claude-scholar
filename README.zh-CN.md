@@ -433,7 +433,7 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 - 把新的 source material 路由进正确的 canonical note，
 - 只有在显式请求时才生成额外的 `.base` 或 canvas。
 
-旧的 `obsidian-project-memory`、`obsidian-project-bootstrap`、`obsidian-experiment-log` 等 Codex 时代技能名，会在一个过渡窗口内保留为 compatibility shim。它们应把用户导向新的 KB-core 工作流，而不是恢复旧目录结构。
+旧的 `obsidian-project-memory`、`obsidian-project-bootstrap`、`obsidian-experiment-log` 等 Codex 时代 Obsidian skill shim 已移除。请直接使用 `obsidian-project-kb-core`、`obsidian-source-ingestion`、`obsidian-literature-workflow` 和 `obsidian-kb-artifacts`。
 
 ### Codex 会话约束与 Hook 模拟
 
