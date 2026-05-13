@@ -30,6 +30,8 @@ When the task is to create or redesign paper-ready figures/tables themselves, re
 
 Do not replace strict analysis with confident prose. If the analysis bundle is missing, first identify the blocker and request or produce the missing bundle.
 
+Hard gate: do not write a complete report when `analysis-report.md`, `stats-appendix.md`, `figure-catalog.md`, provenance, or the primary comparison question is missing. In that case, write only a blocker summary and route back to `results-analysis`.
+
 ## Default output
 
 The default report is an **internal research report**, not manuscript prose.
@@ -146,7 +148,7 @@ If the current repo is bound to an Obsidian project knowledge base:
 - link back to the relevant `Experiments/` note,
 - update the matching canonical `Results/` note when a durable conclusion is now supported,
 - append a short trace to today's `Daily/` note,
-- update `.opencode/project-memory/<project_id>.md`.
+- update `.claude/project-memory/<project_id>.md`.
 
 If the repo is **not** bound:
 - write the report as a local markdown artifact in the requested output location or next to the analysis bundle,

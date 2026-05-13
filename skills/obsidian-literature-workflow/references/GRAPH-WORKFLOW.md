@@ -22,5 +22,5 @@ Refresh the markdown map only when:
 ## Recommended command
 
 ```bash
-python3 "${OPENCODE_DIR:-$HOME/.opencode}/skills/obsidian-literature-workflow/scripts/build_literature_graph.py" --cwd "$PWD"
+python3 "${CLAUDE_PLUGIN_ROOT}/skills/obsidian-literature-workflow/scripts/build_literature_graph.py" --cwd "$PWD"
 ```
