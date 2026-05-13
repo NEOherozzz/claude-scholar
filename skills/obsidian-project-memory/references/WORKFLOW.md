@@ -69,18 +69,18 @@ When the vault lacks background or context, do not extend the script first.
 Instead:
 1. ask an agent to read the most informative project sources,
 2. synthesize project-level knowledge,
-3. write durable notes back into `Knowledge/`, `Experiments/`, `Results/`, `Results/Reports/`, or `Papers/`.
+3. write durable notes back into `Knowledge/`, `Sources/Papers/`, `Experiments/`, `Results/`, or `Results/Reports/`.
 
 ## 5. Advance along the main research path
 
 For substantive research turns, prefer advancing knowledge along this path:
 
 ```text
-Papers -> Experiments -> Results -> Writing
+Sources/Papers -> Experiments -> Results -> Writing
 ```
 
 Typical progression:
-- new paper understanding -> update `Papers/` and decide whether an experiment note should absorb a new hypothesis, baseline, or evaluation rule
+- new paper understanding -> update `Sources/Papers/` and decide whether an experiment note should absorb a new hypothesis, baseline, or evaluation rule
 - experiment planning or execution -> update `Experiments/` and decide what evidence would justify a result note
 - stable finding -> update `Results/` and decide whether a round or batch retrospective should be written under `Results/Reports/`
 - draft or review work -> update `Writing/` and keep links back to supporting results and papers
@@ -97,7 +97,7 @@ Examples:
 - new result interpretation -> `Results/`
 - new internal experiment retrospective -> `Results/Reports/`
 - new project framing -> `Knowledge/`
-- new paper note -> `Papers/`
+- new paper note -> `Sources/Papers/`
 
 ## 7. Ingest a new Markdown file
 

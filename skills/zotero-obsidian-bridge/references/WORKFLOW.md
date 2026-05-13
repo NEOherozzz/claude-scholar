@@ -40,9 +40,9 @@ Each durable paper note should contain:
 ## 5. Synthesize the stable literature knowledge
 
 After a batch import, prefer agent-first synthesis into `Knowledge/`:
-1. update `Knowledge/Literature-Overview.md` when the batch yields a stable overview
-2. update `Knowledge/Method-Families.md` when method clusters are clear
-3. update `Knowledge/Research-Gaps.md` when open problems or tensions are stable enough to keep
+1. update `Knowledge/Literature Overview.md` when the batch yields a stable overview
+2. update `Knowledge/Method Taxonomy.md` when method clusters are clear
+3. update `Knowledge/Research Gaps.md` when open problems or tensions are stable enough to keep
 4. if the source is a named Zotero collection, update a durable inventory note that records:
    - collection size,
    - triage buckets,

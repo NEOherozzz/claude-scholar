@@ -37,9 +37,9 @@ Do not put these here by default:
 - unverified hypotheses with no stable framing,
 - daily execution logs.
 
-### Papers
+### Sources/Papers
 
-Write to `Papers/` when the content is primarily literature-facing:
+Write to `Sources/Papers/` when the content is primarily literature-facing:
 - single paper notes
 - related-work summaries
 - paper-to-project relevance notes
@@ -117,7 +117,7 @@ Do not let `Daily/` become the long-term home for canonical project knowledge. P
 
 ## Main routing rule
 
-If a note will still matter after several days or weeks, prefer `Knowledge/`, `Experiments/`, `Results/`, `Results/Reports/`, `Papers/`, or `Writing/`.
+If a note will still matter after several days or weeks, prefer `Knowledge/`, `Sources/Papers/`, `Experiments/`, `Results/`, `Results/Reports/`, or `Writing/`.
 
 If the note is mainly about today's progress or temporary organization, prefer `Daily/`.
 
@@ -125,7 +125,7 @@ If the note is mainly about today's progress or temporary organization, prefer `
 
 Treat these folders as a research pipeline, not as independent buckets:
 
-- `Papers/` should usually answer: what should we test, compare, or borrow?
+- `Sources/Papers/` should usually answer: what should we test, compare, or borrow?
 - `Experiments/` should usually answer: what exactly are we running, and what finding would matter?
 - `Results/` should usually answer: what do we now believe, with evidence?
 - `Results/Reports/` should usually answer: what happened in this round or batch, and what decision does it imply?

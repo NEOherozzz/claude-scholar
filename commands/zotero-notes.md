@@ -18,7 +18,7 @@ Read papers from the Zotero collection "$collection" and create or update detail
 
 ## Default target
 
-- **Preferred target**: the bound Obsidian project knowledge base (`Papers/*.md`)
+- **Preferred target**: the bound Obsidian project knowledge base (`Sources/Papers/*.md`)
 - **Fallback target**: `reading-notes-{collection}.md` in the working directory if the current repo is not bound to Obsidian
 
 ## Workflow
@@ -44,7 +44,7 @@ Read papers from the Zotero collection "$collection" and create or update detail
 
 ### Step 2: Create/update the canonical paper note
 
-If the project is Obsidian-bound, create or update one canonical note per paper under `Papers/`.
+If the project is Obsidian-bound, create or update one canonical note per paper under `Sources/Papers/`.
 
 Each detailed note should contain:
 - `Claim`
@@ -71,9 +71,9 @@ After the paper-note pass:
 - update a collection inventory note when the source is a named collection
 - record item -> canonical note mapping and coverage counts such as `16 / 16`
 - synthesize durable literature knowledge under `Knowledge/`, for example:
-  - `Knowledge/Literature-Overview.md`
-  - `Knowledge/Method-Families.md`
-  - `Knowledge/Research-Gaps.md`
+  - `Knowledge/Literature Overview.md`
+  - `Knowledge/Method Taxonomy.md`
+  - `Knowledge/Research Gaps.md`
 
 Prefer updating existing canonical knowledge notes over creating parallel summaries.
 
@@ -116,7 +116,7 @@ If the repo is not bound to Obsidian:
 
 - Zotero remains the source of truth for collection structure, metadata, attachments, PDF full text, and annotations.
 - Obsidian remains the source of truth for durable reading notes, project relevance, and cross-note linking.
-- Default bridge targets are `Papers/` and `Knowledge/`.
+- Default bridge targets are `Sources/Papers/` and `Knowledge/`.
 - Do not dump raw full text into Obsidian paper notes.
 - Do not create `Concepts/` or `Datasets/` trees by default.
 - Refresh `Maps/literature.canvas` by default after a substantial Zotero ingestion pass.

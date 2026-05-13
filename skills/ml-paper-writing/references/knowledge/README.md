@@ -23,11 +23,11 @@ It stores:
 `paper-miner` always writes mined writing knowledge into `paper-miner-writing-memory.md`.
 
 This memory is:
-- **global**,
-- **cross-project**,
+- **active installed OpenCode skill memory**,
+- **cross-project within this OpenCode install**,
 - **not project-specific**.
 
-If `paper-miner` is invoked inside a project, it may use project context to understand relevance, but it still writes only to the global memory.
+If `paper-miner` is invoked inside a project, it may use project context to understand relevance, but it still writes only to the active installed OpenCode skill memory.
 
 ## Legacy files
 

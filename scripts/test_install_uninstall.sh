@@ -42,6 +42,8 @@ test_created_config_roundtrip() {
   assert_file_exists "$home/opencode.jsonc"
   assert_file_exists "$home/.opencode-scholar-manifest.txt"
   assert_file_exists "$home/.opencode-scholar-install-state"
+  assert_file_exists "$home/skills/research-ideation/references/research-contract.md"
+  grep -Fxq "skills/research-ideation/references/research-contract.md" "$home/.opencode-scholar-manifest.txt" || fail "research contract missing from manifest"
 
   run_uninstall "$home"
   assert_file_missing "$home/opencode.jsonc"

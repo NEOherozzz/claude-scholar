@@ -246,9 +246,9 @@ or:
 
 Claude Scholar is maintained for:
 
-- **Claude Code** — the primary installation target.
-- **Codex CLI** — supported workflow and documentation are available in this repo ecosystem.
-- **OpenCode** — supported as an alternative CLI workflow.
+- **OpenCode** — the primary installation target for this branch.
+- **Claude Code** — use the `main` branch.
+- **Codex CLI** — use the `codex` branch.
 
 The top-level workflow is the same: research, coding, experiments, reporting, and project knowledge management.
 

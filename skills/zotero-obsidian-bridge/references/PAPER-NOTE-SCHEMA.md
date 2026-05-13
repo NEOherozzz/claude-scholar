@@ -31,8 +31,8 @@ subfield: speech-transfer
 related_papers:
   - "Sources/Papers/Another-Paper"
 linked_knowledge:
-  - "Knowledge/Literature-Overview"
-  - "Knowledge/Method-Families"
+  - "Knowledge/Literature Overview"
+  - "Knowledge/Method Taxonomy"
 argument_claims:
   - "Shared geometry exists but is fragile"
 argument_methods:

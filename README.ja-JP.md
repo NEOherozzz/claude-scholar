@@ -246,9 +246,9 @@ cp AGENTS.zh-CN.md ~/.opencode/AGENTS.zh-CN.md
 
 Claude Scholar は現在、次の CLI ワークフローを対象にしています。
 
-- **Claude Code** — 主たる導入対象
-- **Codex CLI** — 対応ワークフローと対応文書を提供
-- **OpenCode** — 代替 CLI としてサポート
+- **OpenCode** — このブランチの主たる導入対象
+- **Claude Code** — `main` ブランチを使用
+- **Codex CLI** — `codex` ブランチを使用
 
 トップレベルの目的は共通です。研究、コーディング、実験、レポート、執筆、プロジェクト知識ベース保守を一つの大きな流れで支えます。
 

@@ -1,4 +1,4 @@
-# Papers -> Experiments -> Results -> Writing
+# Sources/Papers -> Experiments -> Results -> Writing
 
 Use this as the default durable research pipeline inside the project knowledge base.
 
@@ -7,7 +7,7 @@ Use this as the default durable research pipeline inside the project knowledge b
 The vault should not treat literature, experiments, results, and writing as isolated folders.
 
 Default expectation:
-1. `Papers/` produces hypotheses, reusable methods, baselines, and evaluation criteria.
+1. `Sources/Papers/` produces hypotheses, reusable methods, baselines, and evaluation criteria.
 2. `Experiments/` turns those into actionable test plans or updates an existing experiment line.
 3. `Results/` captures the durable findings that survive beyond one run or one day.
 4. `Writing/` turns those findings into external-facing synthesis: literature review, proposal text, draft claims, slides, rebuttal notes.
@@ -16,9 +16,9 @@ Default expectation:
 
 ## Default handoff rules
 
-### Papers -> Experiments
+### Sources/Papers -> Experiments
 
-Promote from `Papers/` to `Experiments/` when a paper note yields:
+Promote from `Sources/Papers/` to `Experiments/` when a paper note yields:
 - a testable hypothesis,
 - a method variation worth implementing,
 - a baseline worth reproducing,

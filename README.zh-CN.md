@@ -246,9 +246,9 @@ cp AGENTS.zh-CN.md ~/.opencode/AGENTS.zh-CN.md
 
 Claude Scholar 目前面向以下 CLI 工作流：
 
-- **Claude Code** — 主安装目标
-- **Codex CLI** — 支持对应工作流与文档
-- **OpenCode** — 作为替代 CLI 支持
+- **OpenCode** — 本分支的主安装目标
+- **Claude Code** — 使用 `main` 分支
+- **Codex CLI** — 使用 `codex` 分支
 
 顶层目标一致：研究、编码、实验、报告、写作、项目知识库维护。
 
