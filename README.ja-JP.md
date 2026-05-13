@@ -446,7 +446,7 @@ Obsidian を、単なるメモ置き場ではなく、project-scoped な durable
 | Command | `/kb-map` | 既定の literature canvas 以外の explicit-only artifacts を生成または修復する |
 | Command | `/kb-literature-review` | `Sources/Papers` から `Knowledge`、`Writing`、`Maps/literature.canvas` を生成する |
 
-Legacy `/obsidian-*` commands は移行期間中の deprecated alias として残り、`/kb-*` surface に転送されます。旧ディレクトリ構造は復活させません。
+ほとんどの legacy `/obsidian-*` commands は `/kb-*` surface への deprecated alias として残ります。古い deterministic `/obsidian-writeback` compatibility command は、legacy `obsidian-project-memory` helper をインストールしなくなったため削除済みです。
 
 **進め方**
 - 既存 repo を Obsidian vault にバインドする

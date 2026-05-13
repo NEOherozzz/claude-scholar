@@ -443,7 +443,7 @@ Claude Scholar 目前面向以下 CLI 工作流：
 | Command | `/kb-map` | 在默认 literature canvas 之外，按需生成或修复显式请求的 KB artifact。 |
 | Command | `/kb-literature-review` | 从 `Sources/Papers` 生成文献综合，并写入 `Knowledge`、`Writing` 和 `Maps/literature.canvas`。 |
 
-旧的 `/obsidian-*` 命令会在一个过渡窗口内保留为 deprecated alias。它们只转发到 `/kb-*`，不会恢复旧目录语义。
+大多数旧的 `/obsidian-*` 命令仍作为指向 `/kb-*` surface 的 deprecated alias 保留。旧的确定性 `/obsidian-writeback` 兼容命令已移除，因为 legacy `obsidian-project-memory` helper 不再安装。
 
 **工作方式**
 - 将已有 repo 绑定到 Obsidian vault
