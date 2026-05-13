@@ -6,7 +6,7 @@ version: 0.1.0
 
 # Research Ideation
 
-Supports the complete workflow for the research project initiation phase, from literature review to research question definition, method selection, and research planning.
+Supports the complete workflow for the research project initiation phase, from vague idea to a traceable research contract: research question, hypothesis, evidence needs, falsification criteria, method selection, and next action.
 
 ## Core Features
 
@@ -29,7 +29,7 @@ Systematically search, analyze, and synthesize related literature:
 - Search via WebSearch across academic databases (arXiv, Google Scholar, etc.)
 - Screen and evaluate paper quality
 - Identify research trends and gaps
-- Generate structured literature reviews
+- Generate structured literature reviews from evidence-labeled sources
 - **Zotero Integration**: Papers are automatically added to Zotero via DOI, organized into topic-based collections, and open-access PDFs are auto-attached for full-text reading
 
 ### 3. Gap Analysis
@@ -55,6 +55,8 @@ Formulate specific research questions based on literature analysis:
 - Apply SMART principles to formulate questions
 - Evaluate importance, novelty, and feasibility
 - Define research objectives and expected contributions
+- Write a `Research Question Card` that states the hypothesis, current evidence, missing evidence, support criteria, falsification criteria, and minimal next action
+- Apply the proposal readiness gate before turning a card into a polished proposal
 
 ### 5. Method Selection
 
@@ -90,12 +92,12 @@ Use the research-ideation skill in the following situations:
 Research interest → Idea brainstorming (5W1H) → Research Question Card → Evidence Records → Gap analysis → Proposal readiness gate → Select method or experiment → Decision
 ```
 
-**Output Files:**
-- `literature-review.md` - Structured literature review
-- `research-question-card.md` - Intake card when the idea is still under-specified
-- `research-proposal.md` - Research proposal only after the readiness gate passes
-- `references.bib` - References in BibTeX format
-- Zotero collection with organized papers and PDFs
+**Conditional Outputs:**
+- `research-question-card.md` - Always generate this for research startup or intake.
+- `literature-review.md` - Generate only when evidence-labeled sources are sufficient for synthesis.
+- `research-proposal.md` - Generate only when a selected Research Question Card passes the evidence gate.
+- `references.bib` - Generate only when reliable citation metadata exists.
+- Zotero collection with organized papers and PDFs - Create only when Zotero is configured, writable, and the user is not asking for dry-run/audit mode.
 
 ## Integration with Other Systems
 
@@ -113,18 +115,11 @@ ml-paper-writing (Paper writing)
 
 ### Data Flow
 
-- **research-ideation output** → Guides experiment design and method selection
-- **Experimental results** → results-analysis for statistical analysis
-- **Analysis results** → Related Work and Methods sections of ml-paper-writing
-
-### Research Contract
-
-Use `references/research-contract.md` to prevent weak sources, project hypotheses, and missing evidence from becoming polished proposals or manuscript claims.
-
-- **Research Question Card** → Turns a vague idea into a testable research direction before drafting a full proposal.
-- **Evidence Records** → Carry source type, claim strength, and allowed/forbidden wording into literature synthesis, project knowledge, and later claim audit.
-- **Claim Promotion Gate** → Requires an Evidence Record ID before a claim moves into `Knowledge`, `Writing`, reports, manuscripts, or rebuttals.
-- **Proposal Readiness Gate** → Blocks `research-proposal.md` when the current evidence is abstract-only, webpage-placeholder, or otherwise too weak.
+- **Research Question Card** → Guides literature scope, experiment design, and method selection
+- **Evidence Records** → Carry source type, claim strength, and allowed/forbidden wording into literature synthesis, project knowledge, and later claim audit
+- **Proposal Readiness Gate** → Prevents abstract-only or webpage-placeholder evidence from becoming a polished proposal
+- **Experimental results** → results-analysis for statistical analysis and claim candidates
+- **Analysis results** → results-report and ml-paper-writing with explicit evidence limits
 
 ### Zotero Integration
 
@@ -183,6 +178,12 @@ Detailed methodology guides, loaded on demand:
   - Evaluation criteria (importance, novelty, feasibility)
   - Defining research objectives and contributions
 
+- **`references/research-contract.md`** - Research Contract
+  - Research Question Card template
+  - Evidence Record template
+  - Claim Candidate template
+  - Claim strength rules
+
 - **`references/method-selection-guide.md`** - Method Selection Guide
   - Common research method classification
   - Method applicability analysis
@@ -194,13 +195,6 @@ Detailed methodology guides, loaded on demand:
   - Milestone definition techniques
   - Risk identification and mitigation
   - Resource allocation strategies
-
-- **`references/research-contract.md`** - Research Contract
-  - Research Question Card template
-  - Evidence Record template
-  - Claim Candidate template
-  - Source trust levels
-  - Claim Promotion Gate and Proposal Readiness Gate
 
 ### Example Files
 
