@@ -11,7 +11,7 @@ obsidian read file="My Note"
 obsidian daily:append content="- [ ] Follow up"
 ```
 
-## Good uses in Claude Scholar
+## Good uses in OpenCode Scholar
 
 - open a note after updating it
 - search a vault for a known keyword
