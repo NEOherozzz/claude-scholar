@@ -21,13 +21,7 @@ Treat Zotero `webpage` items as weak-source entries unless they clearly expose f
 ## 3. Create/update the canonical paper note
 
 Canonical destination:
-- `Sources/Papers/{FirstAuthor}-{Year}-{ShortTitle}.md`
-
-Filename rules:
-- `FirstAuthor` uses the first author's surname.
-- `Year` uses the 4-digit publication year.
-- `ShortTitle` prefers the stable title prefix before a colon; otherwise keep the main content words in order.
-- Keep the filename stable once created, even if the display `title` is later rewritten for readability.
+- `Sources/Papers/{normalized-title-or-citekey}.md`
 
 Update instead of duplicating when the note already exists.
 
@@ -89,9 +83,8 @@ After batch ingestion or schema refactors:
 Recommended verification command:
 
 ```bash
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/zotero-obsidian-bridge/scripts/verify_paper_notes.py" \
+python3 "${CLAUDE_PLUGIN_ROOT}/skills/zotero-obsidian-bridge/scripts/verify_paper_notes.py" \
   --papers-dir "/absolute/path/to/Sources/Papers" \
-  --filename-scheme "first-author-year-short-title" \
   --expected-zotero-keys "KEY1,KEY2,KEY3" \
   --inventory-note "/absolute/path/to/Knowledge/Zotero-Collection-collection-slug-Inventory.md"
 ```

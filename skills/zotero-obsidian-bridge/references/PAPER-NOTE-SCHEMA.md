@@ -45,17 +45,6 @@ updated: 2026-03-16T00:00:00Z
 ---
 ```
 
-## Canonical filename
-
-```text
-Sources/Papers/{FirstAuthor}-{Year}-{ShortTitle}.md
-```
-
-Where:
-- `FirstAuthor` uses the first author's surname.
-- `Year` uses the 4-digit publication year.
-- `ShortTitle` should stay concise, preserve title keyword order, and prefer a stable prefix before a colon when one exists.
-
 ## Sections
 
 ```markdown
@@ -91,7 +80,6 @@ Use the shared Evidence Record shape from `research-ideation/references/research
 - `paper_relationships` should record explicit semantic edges only when they are stable enough to support graph construction.
 - `concepts` and `methods` may remain plain strings; do not create dedicated notes by default.
 - Keep `Direct relevance to repo` concrete and actionable.
-- Keep the note filename stable under `FirstAuthor-Year-ShortTitle`, even if `title` or `# H1` wording becomes more reader-friendly later.
 - Prefer one durable canonical note per paper; update in place instead of making sibling notes.
 - If the user asked for a full collection pass, normalize the schema across the entire covered set before closing the task.
 - Treat Zotero `webpage` items as weak-source inputs by default. If they are abstract-only or placeholder pages, set `source_type: webpage placeholder` or `source_type: abstract-only`, keep `status: to-read`, and do not use them to support `Knowledge`, manuscript, or rebuttal claims.

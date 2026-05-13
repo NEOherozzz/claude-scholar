@@ -104,11 +104,11 @@ def find_repo_root(cwd: Path) -> Path:
 
 
 def binding_registry_path(repo_root: Path) -> Path:
-    return repo_root / '.codex' / 'project-memory' / 'registry.yaml'
+    return repo_root / '.claude' / 'project-memory' / 'registry.yaml'
 
 
 def project_memory_path(repo_root: Path, project_id: str) -> Path:
-    return repo_root / '.codex' / 'project-memory' / f'{project_id}.md'
+    return repo_root / '.claude' / 'project-memory' / f'{project_id}.md'
 
 
 def load_binding_registry(path: Path) -> dict[str, Any]:
@@ -134,7 +134,11 @@ def load_binding_registry(path: Path) -> dict[str, Any]:
 
 def save_binding_registry(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    try:
+        import yaml  # type: ignore
+        path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True), encoding='utf-8')
+    except Exception:
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 
 def read_text(path: Path, default: str = '') -> str:
@@ -205,7 +209,7 @@ def resolve_binding(repo_root: Path, project_id: str | None = None) -> Binding:
     registry = load_binding_registry(binding_registry_path(repo_root))
     projects = registry.get('projects') or {}
     if not projects:
-        raise SystemExit('No registered projects found in .codex/project-memory/registry.yaml')
+        raise SystemExit('No registered projects found in .claude/project-memory/registry.yaml')
     if project_id is None:
         if len(projects) == 1:
             project_id = next(iter(projects))
@@ -572,39 +576,6 @@ def registry_add_or_update(project_root: Path, rel_path: str, *, status: str | N
     return {'updated': True, 'section': section, 'path': rel_path}
 
 
-def registry_rename_path(project_root: Path, old_rel: str, new_rel: str) -> dict[str, Any]:
-    payload = section_and_row_for_relpath(new_rel)
-    if payload is None:
-        return {'updated': False, 'reason': 'path-not-registrable'}
-    new_section, new_row = payload
-    rows = parse_registry_md(registry_path(project_root))
-    old_link = wikilink(old_rel)
-    moved_row = None
-    old_section = None
-    for section in SECTION_ORDER:
-        if section == 'Archive':
-            continue
-        keep_rows = []
-        for row in rows[section]:
-            if row.get('Path') == old_link:
-                moved_row = row
-                old_section = section
-                continue
-            keep_rows.append(row)
-        rows[section] = keep_rows
-    if moved_row is None:
-        return registry_add_or_update(project_root, new_rel)
-    moved_row['Path'] = new_row['Path']
-    moved_row['Title'] = new_row.get('Title', moved_row.get('Title', Path(new_rel).stem.title()))
-    moved_row['Updated'] = new_row['Updated']
-    if old_section == new_section:
-        rows[new_section].append(moved_row)
-    else:
-        rows[new_section].append(moved_row)
-    write_registry(project_root, rows)
-    return {'updated': True, 'section': new_section, 'path': new_rel, 'old_section': old_section}
-
-
 def registry_archive(project_root: Path, old_rel: str, archived_rel: str, reason: str = 'archive') -> dict[str, Any]:
     rows = parse_registry_md(registry_path(project_root))
     old_link = wikilink(old_rel)
@@ -648,16 +619,6 @@ def registry_remove_path(project_root: Path, rel_path: str, reason: str = 'purge
                 continue
             keep_rows.append(row)
         rows[section] = keep_rows
-
-    archive_rows = []
-    for row in rows['Archive']:
-        if row.get('Old Path') == target or row.get('Archived Path') == target:
-            if removed_row is None:
-                removed_row = row
-            continue
-        archive_rows.append(row)
-    rows['Archive'] = archive_rows
-
     if record_archive:
         rows['Archive'].append({
             'ID': removed_row.get('ID', '') if removed_row else '',
@@ -699,7 +660,7 @@ def update_index(project_root: Path) -> None:
             auto_lines.append('- None yet.')
         auto_lines.append('')
 
-    managed_note = 'Managed block. Refresh with the KB sync/index helpers. Put hand-written navigation in **Curated Index**, not inside the markers below.'
+    managed_note = 'Managed block. Refresh with `/kb-sync` or `/kb-index`. Put hand-written navigation in **Curated Index**, not inside the markers below.'
     auto_block = AUTO_INDEX_BEGIN + '\n' + '\n'.join(auto_lines).rstrip() + '\n' + AUTO_INDEX_END
     index_path = project_root / '02-Index.md'
     content = read_text(index_path)
@@ -851,7 +812,7 @@ def resolve_project_note(project_root: Path, note: str) -> Path:
 
 
 def replace_wikilinks(content: str, old_rel: str, new_rel: str | None = None) -> str:
-    old_variants = {old_rel, old_rel[:-3] if old_rel.endswith('.md') else old_rel, Path(old_rel).stem}
+    old_variants = {old_rel, old_rel[:-3] if old_rel.endswith('.md') else old_rel}
     new_target = None if new_rel is None else (new_rel[:-3] if new_rel.endswith('.md') else new_rel)
 
     def repl(match: re.Match[str]) -> str:

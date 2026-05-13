@@ -34,7 +34,7 @@ Refresh the literature canvas when:
 ## Recommended command
 
 ```bash
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/obsidian-literature-workflow/scripts/build_literature_canvas.py" --cwd "$PWD"
+python3 "${CLAUDE_PLUGIN_ROOT}/skills/obsidian-literature-workflow/scripts/build_literature_canvas.py" --cwd "$PWD"
 ```
 
 ## Display rule

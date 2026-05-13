@@ -8,15 +8,13 @@ import re
 import sys
 from pathlib import Path
 
-from paper_note_naming import canonical_filename_from_text
-
-REQUIRED_HEADING_GROUPS = (
-    ("## Claim", "## 核心观点"),
-    ("## Method", "## 方法"),
-    ("## Evidence", "## 证据"),
-    ("## Limitation", "## 局限"),
-    ("## Direct relevance to repo", "## 与当前项目的关系"),
-    ("## Relation to other papers", "## 与其他论文的关系"),
+REQUIRED_HEADINGS = (
+    "## Claim",
+    "## Method",
+    "## Evidence",
+    "## Limitation",
+    "## Direct relevance to repo",
+    "## Relation to other papers",
 )
 
 REQUIRED_FRONTMATTER_FIELDS = (
@@ -55,12 +53,6 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Treat notes without zotero_key as errors. Default behavior skips them.",
     )
-    parser.add_argument(
-        "--filename-scheme",
-        choices=("none", "first-author-year-short-title"),
-        default="none",
-        help="Optionally enforce the canonical paper-note filename scheme.",
-    )
     return parser.parse_args()
 
 
@@ -83,18 +75,9 @@ def missing_frontmatter_fields(frontmatter: str) -> list[str]:
     return missing
 
 
-def missing_headings(text: str) -> list[str]:
-    missing: list[str] = []
-    for canonical_heading, localized_heading in REQUIRED_HEADING_GROUPS:
-        if canonical_heading not in text and localized_heading not in text:
-            missing.append(canonical_heading)
-    return missing
-
-
 def collect_note_status(
     papers_dir: Path,
     strict_missing_zotero_key: bool,
-    filename_scheme: str,
 ) -> tuple[dict[str, str], list[str], list[str]]:
     key_to_file: dict[str, str] = {}
     issues: list[str] = []
@@ -117,20 +100,13 @@ def collect_note_status(
             )
         key_to_file[zotero_key] = path.name
 
-        heading_issues = missing_headings(text)
-        if heading_issues:
-            issues.append(f"{path.name}: missing headings -> {', '.join(heading_issues)}")
+        missing_headings = [heading for heading in REQUIRED_HEADINGS if heading not in text]
+        if missing_headings:
+            issues.append(f"{path.name}: missing headings -> {', '.join(missing_headings)}")
 
         missing_fields = missing_frontmatter_fields(frontmatter)
         if missing_fields:
             issues.append(f"{path.name}: missing frontmatter fields -> {', '.join(missing_fields)}")
-
-        if filename_scheme == "first-author-year-short-title":
-            expected_filename = canonical_filename_from_text(text)
-            if expected_filename is None:
-                issues.append(f"{path.name}: missing title/authors/year required for filename scheme")
-            elif path.name != expected_filename:
-                issues.append(f"{path.name}: expected canonical filename {expected_filename}")
 
     return key_to_file, issues, skipped_without_key
 
@@ -142,7 +118,7 @@ def parse_inventory_note(inventory_path: Path) -> tuple[dict[str, str], list[str
     in_table = False
 
     for line in text.splitlines():
-        if line.strip() in {"## Item Mapping", "## 条目映射"}:
+        if line.strip() == "## Item Mapping":
             in_table = True
             continue
         if in_table and line.startswith("## "):
@@ -175,7 +151,7 @@ def main() -> int:
 
     note_files = list(papers_dir.glob("*.md"))
     key_to_file, issues, skipped_without_key = collect_note_status(
-        papers_dir, args.strict_missing_zotero_key, args.filename_scheme
+        papers_dir, args.strict_missing_zotero_key
     )
 
     print(f"Papers dir: {papers_dir}")
