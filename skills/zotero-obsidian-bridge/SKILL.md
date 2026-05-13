@@ -33,7 +33,33 @@ Use this skill when the user wants to:
   - `Limitation`
   - `Direct relevance to repo`
   - `Relation to other papers`
-- Treat some Zotero `webpage` items as valid literature sources when they still expose useful metadata, attachment text, or fulltext.
+- Treat Zotero `webpage` items as weak-source entries unless they clearly expose full paper metadata and useful fulltext. Abstract-only pages and webpage placeholders may stay in `To-Read` or inventory notes, but they cannot support durable claims.
+
+## Evidence extraction requirement
+
+Core papers and papers with reusable claims should include an evidence record. Abstract-only or placeholder notes may stay in `To-Read` until there is enough evidence to extract a reusable claim.
+
+```md
+## Evidence Record
+
+Evidence ID:
+Source:
+Source type: full paper | preprint | dataset | experiment artifact | project note | abstract-only | webpage placeholder
+Supports:
+Contradicts:
+Method / dataset / metric:
+Limitation:
+Project relevance:
+Claim strength: speculative | observed | supported | strong
+```
+
+Use `../research-ideation/references/research-contract.md` as the shared contract for Evidence Records and claim strength definitions.
+
+Before synthesis lands in `Knowledge/` or `Writing/`, apply the shared Claim Promotion Gate:
+- every promoted claim must point back to an Evidence Record ID,
+- source type must be strong enough for the claim,
+- abstract-only and webpage-placeholder items cannot support durable claims,
+- allowed wording and forbidden stronger wording must be preserved when the claim may later enter a report, manuscript, or rebuttal.
 
 ## Default workflow
 
@@ -76,6 +102,7 @@ Use this skill when the user wants to:
 8. If the user also wants writing deliverables, update:
    - `Writing/literature-review.md`
    - `Writing/comparison-matrix.md`
+   only when promoted claims pass the evidence gate.
 9. Update today's `Daily/` note and repo-local project memory.
 10. Run a deterministic verification pass after batch ingestion or schema refactors.
 
@@ -99,6 +126,7 @@ Use this skill when the user wants to:
 - If a relationship is uncertain, record it in the note body or `Daily/` instead of manufacturing durable structure.
 - Do not stop at a representative subset if the user explicitly asked to check **all** papers in a collection.
 - Do not leave schema drift unresolved across notes in the same collection after a batch pass.
+- Do not promote abstract-only or webpage-placeholder notes into `Knowledge`, `Writing`, manuscript, or rebuttal claims.
 
 ## References
 
