@@ -6,7 +6,6 @@
     <a href="https://github.com/Galaxy-Dawn/claude-scholar/network/members"><img src="https://img.shields.io/github/forks/Galaxy-Dawn/claude-scholar?style=flat-square" alt="Forks"/></a>
     <img src="https://img.shields.io/github/last-commit/Galaxy-Dawn/claude-scholar?style=flat-square" alt="Last Commit"/>
     <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License"/>
-    <img src="https://img.shields.io/badge/Claude_Code-Compatible-blueviolet?style=flat-square" alt="Claude Code"/>
     <img src="https://img.shields.io/badge/Codex_CLI-Compatible-blue?style=flat-square" alt="Codex CLI"/>
     <img src="https://img.shields.io/badge/OpenCode-Compatible-orange?style=flat-square" alt="OpenCode"/>
   </p>
@@ -23,7 +22,7 @@
 
 - **2026-05-13**: **Evidence-gated research workflow and `Sources/Papers` routing tightened** — added a shared `research-contract.md` for Evidence Records, claim strength, and Claim Promotion Gates; connected research ideation, Zotero ingestion, literature synthesis, results reporting, writing, and rebuttal workflows to that contract; and clarified that project paper notes live under `Sources/Papers` before promoted claims move into `Knowledge` or `Writing`.
 - **2026-04-25**: **OpenCode Obsidian KB lifecycle stabilized** — fixed rename, archive, purge, sync, and lint edge cases in the OpenCode project KB workflow, and made the `/kb-*` commands the primary entrypoints.
-- **2026-04-24**: **Vault-first Obsidian KB workflow backported to OpenCode** — brought the new project-scoped Obsidian knowledge workflow to the OpenCode edition, consolidated the older memory skills into four focused skills, and kept legacy `/obsidian-*` commands as compatibility aliases.
+- **2026-04-24**: **Vault-first Obsidian KB workflow backported to OpenCode** — brought the new project-scoped Obsidian knowledge workflow to the OpenCode edition, consolidated the older memory skills into four focused skills, and made `/kb-*` commands the only Obsidian command surface.
 - **2026-04-22**: **Lightweight core and safe installer lifecycle** — replaced the large always-on `CLAUDE.md` / `AGENTS.md` files with compact core instructions, removed non-core default agents, added Chinese companion files, and added a manifest/state-based uninstall workflow so updates and removals only touch installer-owned files and config entries.
 - **2026-04-15**: **pubfig and pubtab introduced** — introduced [`pubfig`](https://github.com/Galaxy-Dawn/pubfig), a Python package for publication-grade scientific figures, and [`pubtab`](https://github.com/Galaxy-Dawn/pubtab), a Python package for publication-ready tables and Excel↔LaTeX workflows. Together they provide a cleaner production stack for paper figures, benchmark tables, export control, and final artifact QA.
 
@@ -33,7 +32,7 @@
 - **2026-04-15**: **publication-chart-skill integrated into Claude Scholar** — wrapped [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) into `publication-chart-skill`, added the skill to the repository, and connected it to Claude Scholar's analysis and writing boundaries so publication-grade figure/table work now has an explicit handoff route instead of being mixed into general analysis or prose skills.
 - **2026-03-31**: **Zotero smart-import workflow docs aligned** — updated Claude Scholar's research-facing docs around the latest `zotero-mcp` public surface: `zotero_add_items_by_identifier` is now the default paper-import path, `zotero_reconcile_collection_duplicates` is the standard post-import cleanup step, source-aware PDF cascade behavior is documented more accurately, and public vs internal diagnostics are now clearly separated.
 - **2026-03-31**: **README onboarding refreshed** — clarified that Claude Scholar is especially well-suited to computer science and AI researchers, added practical getting-started scenarios after installation, improved prerequisite and branch guidance, and made the “existing local md files must be manually merged” expectation much more explicit.
-- **2026-03-31**: **Installer and hook behavior tightened** — the installer now preserves existing local `AGENTS.md` while installing the repo-managed version as `AGENTS.scholar.md`, and the default hook summaries were trimmed to reduce noisy temp-file / uncommitted-file output while keeping safer write-guard behavior.
+- **2026-03-31**: **Installer and runtime guard behavior tightened** — the installer now preserves existing local `AGENTS.md` while installing the repo-managed version as `AGENTS.scholar.md`, and the default OpenCode guard summaries were trimmed to reduce noisy temp-file / uncommitted-file output while keeping safer write-guard behavior.
 - **2026-03-31**: **Japanese documentation added** — added Japanese docs for the main README plus `AGENTS`, `MCP_SETUP`, and `OBSIDIAN_SETUP`, so the OpenCode branch now has a more complete multilingual documentation surface.
 
 - **2026-02-25**: **Codex CLI** support — added `codex` branch supporting [OpenAI Codex CLI](https://github.com/openai/codex) with config.toml, 40 skills, 14 agents, and sandbox security
@@ -446,7 +445,7 @@ Use Obsidian as the project-scoped durable knowledge surface, not just as a note
 | Command | `/kb-map` | Generate or repair explicit-only KB artifacts beyond the default literature canvas. |
 | Command | `/kb-literature-review` | Generate literature synthesis from `Sources/Papers` into `Knowledge`, `Writing`, and `Maps/literature.canvas`. |
 
-Most legacy `/obsidian-*` commands remain as deprecated aliases to the `/kb-*` surface. The old deterministic `/obsidian-writeback` compatibility command has been removed because the legacy `obsidian-project-memory` helper is no longer installed.
+Old Obsidian command aliases have been removed. Use the `/kb-*` command surface for all Obsidian KB work.
 
 **How it works**
 - bind an existing repo to an Obsidian vault,
@@ -483,7 +482,7 @@ English and Chinese section headings remain mutually compatible during sync, so 
 
 ### Automated Enforcement Workflow
 
-Cross-platform plugins automate routine workflow checks and reminders.
+OpenCode plugins provide routine workflow checks and reminders through runtime guards.
 
 **Plugins**
 - `skill-eval.ts`

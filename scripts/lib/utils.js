@@ -110,12 +110,6 @@ function getProjectRoot(startDir = process.cwd()) {
       return currentDir;
     }
 
-    // 兼容历史 Claude plugin 目录
-    const legacyPluginDir = path.join(currentDir, '.claude-plugin');
-    if (fs.existsSync(legacyPluginDir)) {
-      return currentDir;
-    }
-
     // 检查是否存在 package.json
     const packageJson = path.join(currentDir, 'package.json');
     if (fs.existsSync(packageJson)) {

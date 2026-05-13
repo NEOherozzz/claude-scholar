@@ -127,7 +127,7 @@ Example: When building a `big-query` skill to handle queries like "How many user
 1. Querying BigQuery requires re-discovering the table schemas and relationships each time
 2. A `references/schema.md` file documenting the table schemas would be helpful to store in the skill
 
-**For legacy Claude plugin layouts:** when building a hooks-oriented skill, the analysis may show:
+**For OpenCode runtime-guard layouts:** when building a guard-oriented skill, the analysis may show:
 1. Developers repeatedly need to validate hooks.json and test hook scripts
 2. `scripts/validate-hook-schema.sh` and `scripts/test-hook.sh` utilities would be helpful
 3. `references/patterns.md` for detailed hook patterns to avoid bloating SKILL.md
@@ -136,7 +136,7 @@ To establish the skill's contents, analyze each concrete example to create a lis
 
 ### Step 3: Create Skill Structure
 
-If adapting a legacy Claude plugin layout, create the skill directory structure like this:
+For OpenCode branch skills, create the skill directory structure like this:
 
 ```bash
 mkdir -p plugin-name/skills/skill-name/{references,examples,scripts}
@@ -246,24 +246,19 @@ After testing the skill, users may request improvements. Often this happens righ
 - Clarify ambiguous instructions
 - Add edge case handling
 
-## Plugin-Specific Considerations
+## OpenCode Branch Considerations
 
-### Skill Location in Plugins
+### Skill Location
 
-In legacy Claude plugin layouts, skills live in the plugin's `skills/` directory:
+In this branch, skills live in the repo `skills/` directory and install to `~/.opencode/skills/`:
 
 ```
-my-plugin/
-├── .claude-plugin/
-│   └── plugin.json
-├── commands/
-├── agents/
-└── skills/
-    └── my-skill/
-        ├── SKILL.md
-        ├── references/
-        ├── examples/
-        └── scripts/
+skills/
+└── my-skill/
+    ├── SKILL.md
+    ├── references/
+    ├── examples/
+    └── scripts/
 ```
 
 ### Auto-Discovery
@@ -291,27 +286,25 @@ cc --plugin-dir /path/to/plugin
 # Verify skill loads correctly
 ```
 
-## Examples from Plugin-Dev
+## Examples From This Branch
 
-Study the skills in this plugin as examples of best practices:
+Study these installed skills as examples of best practices:
 
-**hook-development skill:**
-- Excellent trigger phrases: "create a hook", "add a PreToolUse hook", etc.
-- Lean SKILL.md (1,651 words)
-- 3 references/ files for detailed content
-- 3 examples/ of working hooks
-- 3 scripts/ utilities
+**obsidian-project-kb-core skill:**
+- Clear project-scoped ownership.
+- Concrete routing rules for durable notes.
+- Deterministic helper scripts for sync, lint, and lifecycle actions.
 
-**agent-development skill:**
+**agent-identifier skill:**
 - Strong triggers: "create an agent", "agent frontmatter", etc.
-- Focused SKILL.md (1,438 words)
-- References may include AI-generation prompts carried over from Claude Code as historical context
-- Complete agent examples
+- Focused SKILL.md.
+- Clear frontmatter examples.
+- Explicit boundary for non-agent tasks.
 
-**plugin-settings skill:**
-- Specific triggers: "plugin settings", ".local.md files", "YAML frontmatter"
-- References show real implementations (multi-agent-swarm, ralph-wiggum)
-- Working parsing scripts
+**research-ideation skill:**
+- Evidence-aware workflow.
+- Reusable research contract references.
+- Clear separation between claims, assumptions, and next decisions.
 
 Each demonstrates progressive disclosure and strong triggering.
 
@@ -605,13 +598,10 @@ Good for: Complex domains with validation utilities
 
 ### Study These Skills
 
-Plugin-dev's skills demonstrate best practices:
-- `../hook-development/` - Progressive disclosure, utilities
-- `../agent-development/` - AI-assisted creation, references
-- `../mcp-integration/` - Comprehensive references
-- `../plugin-settings/` - Real-world examples
-- `../command-development/` - Clear critical concepts
-- `../plugin-structure/` - Good organization
+OpenCode branch skills demonstrate best practices:
+- `../obsidian-project-kb-core/` - Durable project KB workflow
+- `../research-ideation/` - Evidence-aware research planning
+- `../skill-quality-reviewer/` - Skill review rubric
 
 ### Reference Files
 
