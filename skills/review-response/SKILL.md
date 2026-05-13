@@ -75,7 +75,7 @@ Key lessons extracted from successful rebuttal cases:
 - "Easily applicable" and "scalable" are important strengths
 - **Strategy**: Emphasize practical benefits and scalability in the rebuttal
 
-## Integration with paper-miner writing memory
+## Integration with active installed writing memory
 
 When the rebuttal task involves:
 - tone calibration,
@@ -86,7 +86,8 @@ When the rebuttal task involves:
 
 read the active installed writing memory before drafting:
 
-- `~/.codex/skills/ml-paper-writing/references/knowledge/paper-miner-writing-memory.md` on Codex installs
+- `~/.claude/skills/ml-paper-writing/references/knowledge/paper-miner-writing-memory.md` on Claude Code installs
+- the equivalent installed skill-home path on Codex/OpenCode branches
 - otherwise skip this optional memory and continue with the local review-response references
 
 ### Default read order for rebuttal work
