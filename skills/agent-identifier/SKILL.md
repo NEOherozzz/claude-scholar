@@ -34,7 +34,7 @@ Do not use this skill for:
 - Slash command design
 - Hook configuration
 - MCP server setup
-- General plugin layout questions that belong to `plugin-structure`
+- General runtime layout questions outside agent frontmatter
 
 ## Agent File Structure
 

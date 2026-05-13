@@ -102,9 +102,10 @@ function getProjectRoot(startDir = process.cwd()) {
   let currentDir = startDir;
 
   while (currentDir !== path.parse(currentDir).root) {
-    // 检查是否存在 .claude-plugin 目录（Claude Code plugin repo）
-    const pluginDir = path.join(currentDir, '.claude-plugin');
-    if (fs.existsSync(pluginDir)) {
+    // 检查是否存在 Codex 项目标记
+    const codexConfig = path.join(currentDir, 'config.toml');
+    const agentsDoc = path.join(currentDir, 'AGENTS.md');
+    if (fs.existsSync(codexConfig) || fs.existsSync(agentsDoc)) {
       return currentDir;
     }
 
