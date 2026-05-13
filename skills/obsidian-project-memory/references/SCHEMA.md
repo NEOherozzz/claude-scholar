@@ -21,8 +21,8 @@ Language resolution priority:
 Research/{project-slug}/
   00-Hub.md
   01-Plan.md
+  Sources/Papers/
   Knowledge/
-  Papers/
   Experiments/
   Results/
     Reports/
@@ -36,7 +36,7 @@ Research/{project-slug}/
 - `00-Hub.md` — project homepage, current state, must-remember numbers, key links
 - `01-Plan.md` — active goals, tasks, open questions, next actions
 - `Knowledge/` — stable project understanding such as background, research questions, method survey, data protocol, source inventory
-- `Papers/` — paper notes, literature summaries, related-work assets
+- `Sources/Papers/` — paper source notes, literature summaries, related-work assets
 - `Experiments/` — experiment designs, runbooks, ablations, mechanism studies
 - `Results/` — canonical durable findings, diagnostics, figure/table indexes, cross-experiment conclusions
 - `Results/Reports/` — internal experiment round reports and batch retrospectives with stable naming

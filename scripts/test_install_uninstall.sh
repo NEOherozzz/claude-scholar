@@ -45,6 +45,8 @@ test_roundtrip_existing_config() {
   test -f "$home/.codex/.codex-scholar-manifest.txt"
   test -f "$home/.codex/.codex-scholar-install-state"
   test -f "$home/.codex/AGENTS.md"
+  test -f "$home/.codex/skills/research-ideation/references/research-contract.md"
+  grep -Fxq "skills/research-ideation/references/research-contract.md" "$home/.codex/.codex-scholar-manifest.txt"
 
   run_uninstall "$home"
   test ! -f "$home/.codex/.codex-scholar-manifest.txt"

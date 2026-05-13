@@ -268,7 +268,7 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 
 适合这些场景：
 - 维护以文件系统为核心的项目知识库
-- 管理 `Papers/`
+- 管理 `Sources/Papers/`
 - 管理 `Knowledge/`
 - 管理 `Experiments/`
 - 管理 `Results/`

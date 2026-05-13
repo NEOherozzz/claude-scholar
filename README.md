@@ -267,7 +267,7 @@ See [MCP_SETUP.md](./MCP_SETUP.md).
 ### Obsidian
 
 Use Obsidian when you want Claude Scholar to maintain a filesystem-first research knowledge base:
-- `Papers/`
+- `Sources/Papers/`
 - `Knowledge/`
 - `Experiments/`
 - `Results/`

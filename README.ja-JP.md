@@ -268,7 +268,7 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 
 次のような場面に向いています。
 - ファイルシステム中心のプロジェクト知識ベースを維持する
-- `Papers/` を管理する
+- `Sources/Papers/` を管理する
 - `Knowledge/` を管理する
 - `Experiments/` を管理する
 - `Results/` を管理する

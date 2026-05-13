@@ -16,7 +16,7 @@ Use these rules when maintaining a research-project knowledge base.
 When a research turn is substantive, prefer moving durable knowledge forward along this path:
 
 ```
-Papers -> Experiments -> Results -> Writing
+Sources/Papers -> Experiments -> Results -> Writing
 ```
 
 Interpretation:
@@ -66,7 +66,7 @@ Use the smallest sufficient read set first.
 - next step / active work -> `01-Plan.md` + today's `Daily/` + project memory
 - specific experiment -> matching note in `Experiments/`
 - specific result -> matching note in `Results/`
-- literature question -> matching note in `Papers/`
+- literature question -> matching note in `Sources/Papers/`
 
 ### Query order
 

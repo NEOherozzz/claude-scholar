@@ -41,7 +41,7 @@ Default answer: **summarize first, then route**.
 ### New paper summary
 
 - likely classification: `paper`
-- if complete and stable -> promote to `Papers/`
+- if complete and stable -> promote to `Sources/Papers/`
 - if partial reading notes for an existing paper note -> merge
 
 ### New experiment plan

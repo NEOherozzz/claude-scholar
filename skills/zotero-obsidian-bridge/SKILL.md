@@ -11,7 +11,7 @@ Bridge **Zotero as the literature source of truth** with **Obsidian as the durab
 Use this skill when the user wants to:
 - collect and organize papers in Zotero,
 - read papers from Zotero MCP,
-- create or update one detailed paper note per paper under Obsidian `Papers/`,
+- create or update one detailed paper note per paper under Obsidian `Sources/Papers/`,
 - synthesize those notes into `Knowledge/` notes,
 - verify that a whole Zotero collection has complete canonical note coverage,
 - visualize the literature structure as a default Obsidian canvas.
@@ -23,8 +23,8 @@ Use this skill when the user wants to:
 - Prefer **one canonical paper note per paper**.
 - Prefer **filesystem-first Obsidian notes**; do not require Obsidian MCP.
 - Use this as an **explicit, agent-first skill** for Zotero ingestion.
-- Prefer **`Papers/` + `Knowledge/`** as the default bridge targets.
-- Prefer the canonical paper-note filename pattern `Papers/{FirstAuthor}-{Year}-{ShortTitle}.md`.
+- Prefer **`Sources/Papers/` + `Knowledge/`** as the default bridge targets.
+- Prefer the canonical paper-note filename pattern `Sources/Papers/{FirstAuthor}-{Year}-{ShortTitle}.md`.
 - Prefer **`Maps/literature.canvas`** as the default graph artifact.
 - Prefer a strong review schema inside each canonical paper note:
   - `Claim`
@@ -73,7 +73,7 @@ Before synthesis lands in `Knowledge/` or `Writing/`, apply the shared Claim Pro
    - get metadata,
    - get full text when available,
    - get annotations/notes when helpful,
-   - create or update the canonical paper note in `Papers/`.
+   - create or update the canonical paper note in `Sources/Papers/`.
 4. Add project-facing structure to each paper note:
    - claim,
    - research question,
@@ -85,9 +85,9 @@ Before synthesis lands in `Knowledge/` or `Writing/`, apply the shared Claim Pro
    - relation to other papers,
    - links to related papers and the best matching `Knowledge/` notes.
 5. Synthesize the batch into durable `Knowledge/` notes such as:
-   - `Knowledge/Literature-Overview.md`
-   - `Knowledge/Method-Families.md`
-   - `Knowledge/Research-Gaps.md`
+   - `Knowledge/Literature Overview.md`
+   - `Knowledge/Method Taxonomy.md`
+   - `Knowledge/Research Gaps.md`
    only when the synthesis is stable enough to deserve a canonical note.
 6. If the request is collection-scoped, update a durable inventory note that records:
    - collection size,
@@ -108,7 +108,7 @@ Before synthesis lands in `Knowledge/` or `Writing/`, apply the shared Claim Pro
 
 ## Default outputs
 
-- `Papers/*.md` - one detailed reading note per paper
+- `Sources/Papers/*.md` - one detailed reading note per paper
 - `Knowledge/*.md` - durable literature synthesis notes when the batch yields stable knowledge
 - `Knowledge/Zotero-Collection-{collection-slug}-Inventory.md` - when the source is a concrete Zotero collection and coverage tracking matters
 - `Maps/literature.canvas` - default visual literature graph

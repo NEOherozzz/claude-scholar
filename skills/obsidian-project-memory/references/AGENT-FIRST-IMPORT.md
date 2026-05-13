@@ -40,7 +40,7 @@ Instead:
 - put high-level framing in `Knowledge/`,
 - put experiment logic in `Experiments/`,
 - put findings in `Results/`,
-- put literature-facing material in `Papers/`.
+- put literature-facing material in `Sources/Papers/`.
 
 ## Anti-pattern
 

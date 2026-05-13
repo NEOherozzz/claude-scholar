@@ -21,7 +21,7 @@ Treat Zotero `webpage` items as weak-source entries unless they clearly expose f
 ## 3. Create/update the canonical paper note
 
 Canonical destination:
-- `Papers/{FirstAuthor}-{Year}-{ShortTitle}.md`
+- `Sources/Papers/{FirstAuthor}-{Year}-{ShortTitle}.md`
 
 Filename rules:
 - `FirstAuthor` uses the first author's surname.
@@ -46,9 +46,9 @@ Each durable paper note should contain:
 ## 5. Synthesize the stable literature knowledge
 
 After a batch import, prefer agent-first synthesis into `Knowledge/`:
-1. update `Knowledge/Literature-Overview.md` when the batch yields a stable overview
-2. update `Knowledge/Method-Families.md` when method clusters are clear
-3. update `Knowledge/Research-Gaps.md` when open problems or tensions are stable enough to keep
+1. update `Knowledge/Literature Overview.md` when the batch yields a stable overview
+2. update `Knowledge/Method Taxonomy.md` when method clusters are clear
+3. update `Knowledge/Research Gaps.md` when open problems or tensions are stable enough to keep
 4. if the source is a named Zotero collection, update a durable inventory note that records:
    - collection size,
    - triage buckets,
@@ -74,7 +74,7 @@ After batch note creation or major note updates:
 
 ## 7. Push downstream only when justified
 
-- during Zotero ingestion, default to `Papers/` plus `Knowledge/`
+- during Zotero ingestion, default to `Sources/Papers/` plus `Knowledge/`
 - update `Writing/` only when the user asks for a review, comparison, or draft-facing synthesis and the promoted claims pass the Claim Promotion Gate
 - treat `Experiments/` and `Results/` as later project workflows, not default Zotero-import targets
 
@@ -89,8 +89,8 @@ After batch ingestion or schema refactors:
 Recommended verification command:
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/skills/zotero-obsidian-bridge/scripts/verify_paper_notes.py" \
-  --papers-dir "/absolute/path/to/Papers" \
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/zotero-obsidian-bridge/scripts/verify_paper_notes.py" \
+  --papers-dir "/absolute/path/to/Sources/Papers" \
   --filename-scheme "first-author-year-short-title" \
   --expected-zotero-keys "KEY1,KEY2,KEY3" \
   --inventory-note "/absolute/path/to/Knowledge/Zotero-Collection-collection-slug-Inventory.md"
