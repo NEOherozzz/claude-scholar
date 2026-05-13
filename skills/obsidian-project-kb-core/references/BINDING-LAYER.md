@@ -3,8 +3,8 @@
 Repo-local binding metadata remains under:
 
 ```text
-.claude/project-memory/registry.yaml
-.claude/project-memory/<project_id>.md
+.codex/project-memory/registry.yaml
+.codex/project-memory/<project_id>.md
 ```
 
 This is the runtime binding layer only.
