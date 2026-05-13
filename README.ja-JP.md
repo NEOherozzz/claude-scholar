@@ -363,7 +363,7 @@ Claude Scholar は現在、次の CLI ワークフローを対象にしていま
 | Skill | `writing-anti-ai` | 機械的な言い回しを減らし、明瞭さ、リズム、自然な学術トーンを改善する |
 | Skill | `latex-conference-template-organizer` | 散らかった会議テンプレートを Overleaf-ready な執筆構造へ整理する |
 | Agent | `paper-miner` | 高品質論文から再利用可能な書き方、構造、投稿ノウハウを抽出する |
-| Command | `/mine-writing-patterns` | 論文を読み、再利用可能な執筆知識をグローバル paper-miner writing memory に統合する |
+| Command | `/mine-writing-patterns` | 論文を読み、再利用可能な執筆知識を現在インストール済みの paper-miner writing memory に統合する |
 
 **進め方**
 - **テンプレート準備**：会議テンプレートを Overleaf-ready な構造へ整理する

@@ -363,7 +363,7 @@ Systematic academic writing from structure setup to draft refinement.
 | Skill | `writing-anti-ai` | Reduce robotic phrasing and improve clarity, rhythm, and human academic tone. |
 | Skill | `latex-conference-template-organizer` | Clean messy conference templates into an Overleaf-ready writing structure. |
 | Agent | `paper-miner` | Mine strong papers for reusable writing patterns, structure, and venue expectations. |
-| Command | `/mine-writing-patterns` | Read a paper and merge reusable writing knowledge into the global paper-miner writing memory. |
+| Command | `/mine-writing-patterns` | Read a paper and merge reusable writing knowledge into the active installed paper-miner writing memory. |
 
 **How it works**
 - **Template Preparation**: clean conference templates into an Overleaf-ready structure.

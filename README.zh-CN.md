@@ -360,7 +360,7 @@ Claude Scholar 目前面向以下 CLI 工作流：
 | Skill | `writing-anti-ai` | 减少机械化表述，提升清晰度、节奏和更自然的学术语气。 |
 | Skill | `latex-conference-template-organizer` | 把混乱的会议模板整理成 Overleaf-ready 写作结构。 |
 | Agent | `paper-miner` | 从高质量论文中提炼可复用的写作模式、结构和投稿经验。 |
-| Command | `/mine-writing-patterns` | 读取论文并把可复用写作知识合并进全局 paper-miner writing memory。 |
+| Command | `/mine-writing-patterns` | 读取论文并把可复用写作知识合并进当前已安装的 paper-miner 写作记忆。 |
 
 **工作方式**
 - **模板准备**：把会议模板清理成 Overleaf-ready 结构。

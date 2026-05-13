@@ -112,6 +112,7 @@ Minimum required inputs:
 - actual figures, if available
 
 If these are missing, either generate them first with `results-analysis` or explicitly state which claims cannot be supported.
+Do not turn loose CSV/Markdown artifacts into a polished report unless the strict analysis bundle has already validated unit of analysis, primary metric, and claim wording.
 
 ### 3. Write the report as a decision object
 
@@ -169,6 +170,7 @@ The report must end with operational decisions, for example:
 - The report must include negative results when they matter.
 - The report must separate stable conclusion from tentative interpretation.
 - The report must say what changed in project belief and what should happen next.
+- The report must preserve Claim Candidate wording and must not promote `speculative` or `observed` claims into decisive conclusions.
 
 ## Reference files
 

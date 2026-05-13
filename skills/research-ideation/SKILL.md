@@ -87,12 +87,13 @@ Use the research-ideation skill in the following situations:
 ### Typical Workflow
 
 ```
-Research interest → Idea brainstorming (5W1H) → Literature review → Gap analysis → Define question → Select method → Create plan
+Research interest → Idea brainstorming (5W1H) → Research Question Card → Evidence Records → Gap analysis → Proposal readiness gate → Select method or experiment → Decision
 ```
 
 **Output Files:**
 - `literature-review.md` - Structured literature review
-- `research-proposal.md` - Research proposal (including question, method, plan)
+- `research-question-card.md` - Intake card when the idea is still under-specified
+- `research-proposal.md` - Research proposal only after the readiness gate passes
 - `references.bib` - References in BibTeX format
 - Zotero collection with organized papers and PDFs
 
@@ -115,6 +116,15 @@ ml-paper-writing (Paper writing)
 - **research-ideation output** → Guides experiment design and method selection
 - **Experimental results** → results-analysis for statistical analysis
 - **Analysis results** → Related Work and Methods sections of ml-paper-writing
+
+### Research Contract
+
+Use `references/research-contract.md` to prevent weak sources, project hypotheses, and missing evidence from becoming polished proposals or manuscript claims.
+
+- **Research Question Card** → Turns a vague idea into a testable research direction before drafting a full proposal.
+- **Evidence Records** → Carry source type, claim strength, and allowed/forbidden wording into literature synthesis, project knowledge, and later claim audit.
+- **Claim Promotion Gate** → Requires an Evidence Record ID before a claim moves into `Knowledge`, `Writing`, reports, manuscripts, or rebuttals.
+- **Proposal Readiness Gate** → Blocks `research-proposal.md` when the current evidence is abstract-only, webpage-placeholder, or otherwise too weak.
 
 ### Zotero Integration
 
@@ -184,6 +194,13 @@ Detailed methodology guides, loaded on demand:
   - Milestone definition techniques
   - Risk identification and mitigation
   - Resource allocation strategies
+
+- **`references/research-contract.md`** - Research Contract
+  - Research Question Card template
+  - Evidence Record template
+  - Claim Candidate template
+  - Source trust levels
+  - Claim Promotion Gate and Proposal Readiness Gate
 
 ### Example Files
 

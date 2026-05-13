@@ -67,6 +67,8 @@ Validate:
 
 If the comparison is not statistically valid, say so before continuing.
 
+When the task is read-only review, audit, no-write, or dry-run, use audit mode instead of producing files or figures. In audit mode, report valid statistics, invalid statistics, claim candidates, blockers, and missing artifacts in the response only.
+
 ### 2. Lock the comparison questions
 
 Before running statistics, define the exact comparison questions:
@@ -92,6 +94,8 @@ Default expectation:
 - check parametric assumptions first,
 - use non-parametric fallback when assumptions fail,
 - state exactly what was tested and on what samples.
+
+Quarantine any statistics file whose interpretation contradicts its own p-value, test method, unit of analysis, or comparison family. Do not reuse that file for claim wording until provenance is checked.
 
 See:
 - `references/statistical-methods.md`
@@ -190,6 +194,9 @@ Examples:
 - no comparable baseline outputs -> no significance claim,
 - no readable logs -> cannot generate dynamics figure,
 - too few runs -> effect size may be unstable; report this limitation.
+- unclear unit of analysis -> no winner claim or significance claim,
+- repeated `subject x task` rows without subject-level aggregation -> do not treat all rows as independent subjects,
+- contradictory statistics table -> quarantine the table and route back to provenance inspection.
 
 Never replace missing evidence with confident prose.
 
