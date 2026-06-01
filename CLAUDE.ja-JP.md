@@ -4,7 +4,7 @@
 
 利用可能な場合は、まず次を読む:
 
-`~/.codex/skills/expression-skill/SKILL.md`
+`~/.claude/skills/expression-skill/SKILL.md`
 
 インストール済みの `expression-skill` を既定のコミュニケーション層として使う。
 
