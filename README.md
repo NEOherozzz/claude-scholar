@@ -3,26 +3,33 @@
 
   <p>
     <a href="https://github.com/Galaxy-Dawn/claude-scholar/stargazers"><img src="https://img.shields.io/github/stars/Galaxy-Dawn/claude-scholar?style=flat-square&color=yellow" alt="Stars"/></a>
+    <a href="https://gitcode.com/Dawngammad/claude-scholar"><img src="https://gitcode.com/Dawngammad/claude-scholar/star/badge.svg" alt="GitCode Stars"/></a>
     <a href="https://github.com/Galaxy-Dawn/claude-scholar/network/members"><img src="https://img.shields.io/github/forks/Galaxy-Dawn/claude-scholar?style=flat-square" alt="Forks"/></a>
-    <img src="https://img.shields.io/github/last-commit/Galaxy-Dawn/claude-scholar?style=flat-square" alt="Last Commit"/>
+    <img src="https://img.shields.io/github/last-commit/Galaxy-Dawn/claude-scholar/main?style=flat-square" alt="Last Commit"/>
     <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License"/>
-    <img src="https://img.shields.io/badge/Claude_Code-Compatible-blueviolet?style=flat-square" alt="Claude Code"/>
-    <img src="https://img.shields.io/badge/Codex_CLI-Compatible-blue?style=flat-square" alt="Codex CLI"/>
-    <img src="https://img.shields.io/badge/OpenCode-Compatible-orange?style=flat-square" alt="OpenCode"/>
   </p>
 
 
+  <p>
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/kimi-open-source-friends-dark.svg">
+      <img alt="Kimi Open Source Friends" src="assets/kimi-open-source-friends-light.svg">
+    </picture>
+  </p>
+
   <strong>Language</strong>: <a href="README.md">English</a> | <a href="README.zh-CN.md">中文</a> | <a href="README.ja-JP.md">日本語</a>
+  <p><strong>Supported Platforms</strong>: <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/main">Claude Code</a> | <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/codex">Codex CLI</a> | <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/kimi">Kimi Code CLI</a> | <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/opencode">OpenCode</a></p>
 
 </div>
 
-> Semi-automated research assistant for academic research and software development, especially for computer science and AI researchers. Supports [Claude Code](https://github.com/anthropics/claude-code), [Codex CLI](https://github.com/openai/codex), and [OpenCode](https://github.com/opencode-ai/opencode) across literature review, coding, experiments, reporting, writing, and project knowledge management.
+> Semi-automated research assistant for academic research and software development, especially for computer science and AI researchers. Supports [Claude Code](https://github.com/anthropics/claude-code), [Codex CLI](https://github.com/openai/codex), [Kimi Code CLI](https://github.com/MoonshotAI/kimi-code), and [OpenCode](https://github.com/opencode-ai/opencode) across literature review, coding, experiments, reporting, writing, and project knowledge management.
 
-  <p><em>Branch note</em>: the <code>main</code> branch is the Claude Code workflow. If you use Codex CLI, please see the <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/codex"><code>codex</code> branch</a>. If you use OpenCode, please see the <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/opencode"><code>opencode</code> branch</a>.</p>
+  <p><em>Branch note</em>: the <code>main</code> branch is the Claude Code workflow. If you use Codex CLI, please see the <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/codex"><code>codex</code> branch</a>. If you use Kimi Code CLI, please see the <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/kimi"><code>kimi</code> branch</a>. If you use OpenCode, please see the <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/opencode"><code>opencode</code> branch</a>.</p>
 
 
 ## Recent News
 
+- **2026-06-03**: **Kimi Code CLI branch added with strong support from Kimi** — added the `kimi` branch as the Kimi Code CLI edition of Claude Scholar and thank the Kimi team for their strong support of this project.
 - **2026-05-14**: **`expression-skill` made the communication core, `planning-with-files` restored as the default persistence layer, and the Nature writing stack expanded** — made [`expression-skill`](./skills/expression-skill/README.md) the explicit conclusion-first discipline for reporting, planning, file operations, and multi-step technical work; reintroduced [`planning-with-files`](./skills/planning-with-files/SKILL.md) as the default on-disk planning and progress-tracking workflow for complex tasks; introduced [`nature-writing`](./skills/nature-writing/README.md) for section drafting and argument construction; refreshed [`nature-polishing`](./skills/nature-polishing/README.md) to the latest upstream article-pattern release; and kept [`nature-response`](./skills/nature-response/README.md) plus [`nature-data`](./skills/nature-data/README.md) in the journal-writing stack.
 - **2026-05-13**: **Evidence-gated research workflow and `Sources/Papers` routing tightened** — added a shared `research-contract.md` for Evidence Records, claim strength, and Claim Promotion Gates; connected research ideation, Zotero ingestion, literature synthesis, results reporting, writing, and rebuttal workflows to that contract; and clarified that project paper notes live under `Sources/Papers` before promoted claims move into `Knowledge` or `Writing`.
 - **2026-04-24**: **Project-scoped Obsidian KB workflow consolidated** — rebuilt Obsidian project knowledge management into a vault-first workflow, consolidated the older overlapping memory skills into four focused skills, kept repo-local project binding metadata as a runtime layer, and made project navigation human-first instead of a machine registry dump.

@@ -4,7 +4,7 @@
 
 在可用时，优先先读取：
 
-`~/.codex/skills/expression-skill/SKILL.md`
+`~/.claude/skills/expression-skill/SKILL.md`
 
 将已安装的 `expression-skill` 作为默认表达层。
 
