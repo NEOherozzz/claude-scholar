@@ -103,6 +103,24 @@ def find_repo_root(cwd: Path) -> Path:
         return cur
 
 
+def expand_path(value: str) -> Path:
+    """Expand environment variables ($VAR / ${VAR}) and ~ in a configured path.
+
+    Lets binding registry entries stay machine-independent: each machine sets the
+    referenced variable (e.g. LIFEOS_ROOT) to its own absolute vault location, so the
+    same registry.yaml works across machines where the vault lives at different paths.
+    Raises if a referenced variable is unset, to avoid silently resolving a wrong path.
+    """
+    raw = os.fspath(value)
+    expanded = os.path.expandvars(raw)
+    if re.search(r'\$\w|\$\{', expanded):
+        raise SystemExit(
+            f'Unresolved environment variable in configured path: {raw!r} (got {expanded!r}). '
+            'Set the referenced variable (e.g. LIFEOS_ROOT) in this machine environment.'
+        )
+    return Path(expanded).expanduser()
+
+
 def binding_registry_path(repo_root: Path) -> Path:
     return repo_root / '.claude' / 'project-memory' / 'registry.yaml'
 
@@ -222,8 +240,11 @@ def resolve_binding(repo_root: Path, project_id: str | None = None) -> Binding:
     entry = projects.get(project_id)
     if not entry:
         raise SystemExit(f'Project {project_id!r} not found in binding registry')
-    project_root = Path(entry['vault_root']).expanduser().resolve()
-    vault_path = project_root.parent.parent
+    project_root = expand_path(entry['vault_root']).resolve()
+    if entry.get('vault_path'):
+        vault_path = expand_path(entry['vault_path']).resolve()
+    else:
+        vault_path = project_root.parent.parent
     return Binding(
         project_id=entry.get('project_id', project_id),
         project_slug=entry.get('project_slug', project_root.name),
@@ -268,7 +289,7 @@ def detect(repo_root: Path) -> dict[str, Any]:
     features = detect_project_features(repo_root)
     project = None
     for project_id, entry in (registry.get('projects') or {}).items():
-        roots = [Path(item).expanduser().resolve() for item in entry.get('repo_roots') or []]
+        roots = [expand_path(item).resolve() for item in entry.get('repo_roots') or []]
         if repo_root.resolve() in roots:
             project = {
                 'project_id': project_id,
@@ -351,11 +372,14 @@ def maybe_migrate_old_layout(project_root: Path) -> list[dict[str, str]]:
     return migrated
 
 
-def bootstrap_binding(repo_root: Path, vault_path: Path, project_name: str | None = None, force: bool = False, note_language: str = 'en') -> dict[str, Any]:
+def bootstrap_binding(repo_root: Path, vault_path: Path, project_name: str | None = None, force: bool = False, note_language: str = 'en', flat_project_root: Path | None = None) -> dict[str, Any]:
     project_slug = slugify(project_name or repo_root.name)
     project_title = project_name or titleize_slug(project_slug)
     vault_path = vault_path.expanduser().resolve()
-    project_root = project_root_for(vault_path, project_slug)
+    if flat_project_root is not None:
+        project_root = flat_project_root.expanduser().resolve()
+    else:
+        project_root = project_root_for(vault_path, project_slug)
     project_root.mkdir(parents=True, exist_ok=True)
     ensure_project_scaffold(project_root, project_slug, project_title, force=force)
     migrated = maybe_migrate_old_layout(project_root)
@@ -363,7 +387,7 @@ def bootstrap_binding(repo_root: Path, vault_path: Path, project_name: str | Non
     reg_path = binding_registry_path(repo_root)
     registry = load_binding_registry(reg_path)
     registry.setdefault('projects', {})
-    registry['projects'][project_slug] = {
+    entry: dict[str, Any] = {
         'project_id': project_slug,
         'project_slug': project_slug,
         'repo_roots': [str(repo_root.resolve())],
@@ -375,6 +399,10 @@ def bootstrap_binding(repo_root: Path, vault_path: Path, project_name: str | Non
         'note_language': note_language,
         'updated_at': now_iso(),
     }
+    if flat_project_root is not None:
+        entry['vault_path'] = str(vault_path)
+        entry['flat_layout'] = True
+    registry['projects'][project_slug] = entry
     save_binding_registry(reg_path, registry)
 
     memory = project_memory_path(repo_root, project_slug)
@@ -631,6 +659,10 @@ def registry_remove_path(project_root: Path, rel_path: str, reason: str = 'purge
     write_registry(project_root, rows)
 
 
+def is_apple_sidecar(path: Path) -> bool:
+    return path.name.startswith('._')
+
+
 def scan_canonical_relpaths(project_root: Path) -> list[str]:
     rels: list[str] = []
     for base in ['Sources', 'Knowledge', 'Experiments', 'Results', 'Writing', 'Maps']:
@@ -638,7 +670,7 @@ def scan_canonical_relpaths(project_root: Path) -> list[str]:
         if not path.exists():
             continue
         for child in sorted(path.rglob('*')):
-            if child.is_dir():
+            if child.is_dir() or is_apple_sidecar(child):
                 continue
             if base == 'Maps' and child.suffix not in {'.canvas', '.md'}:
                 continue

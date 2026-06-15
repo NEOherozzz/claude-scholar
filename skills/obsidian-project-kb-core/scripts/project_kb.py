@@ -30,6 +30,7 @@ def parse_args() -> argparse.Namespace:
     bootstrap.add_argument('--project-name', default='')
     bootstrap.add_argument('--project-id', default='')
     bootstrap.add_argument('--note-language', default='en')
+    bootstrap.add_argument('--flat-project-root', default='', help='Treat this path as the project root directly (skip vault/Research/{slug} nesting).')
     bootstrap.add_argument('--force', action='store_true')
 
     sync = subparsers.add_parser('sync', help='Refresh scaffold, registry, index, daily note, and runtime binding summary.')
@@ -314,6 +315,8 @@ def rewrite_project_references(project_root: Path, old_rel: str, new_rel: str | 
     for path in sorted(project_root.rglob('*')):
         if path.is_dir():
             continue
+        if path.name.startswith('._'):
+            continue
         rel = str(path.relative_to(project_root)).replace(os.sep, '/')
         if rel == '02-Index.md' or rel.startswith('_system/'):
             continue
@@ -389,6 +392,8 @@ def project_status(binding: common.Binding) -> dict[str, Any]:
     active_notes_referencing_archived_notes = 0
     experiments_with_only_archived_results = 0
     for path in sorted(binding.project_root.rglob('*.md')):
+        if path.name.startswith('._'):
+            continue
         rel = str(path.relative_to(binding.project_root)).replace(os.sep, '/')
         if rel.startswith('Archive/') or rel.startswith('_system/'):
             continue
@@ -432,12 +437,15 @@ def main() -> None:
         vault_arg = args.vault_path or os.environ.get('OBSIDIAN_VAULT_PATH', '')
         if not vault_arg:
             raise SystemExit('bootstrap requires --vault-path or OBSIDIAN_VAULT_PATH')
+        flat_arg = args.flat_project_root or os.environ.get('OBSIDIAN_PROJECT_ROOT', '')
+        flat_path = Path(flat_arg) if flat_arg else None
         result = common.bootstrap_binding(
             repo_root,
             Path(vault_arg),
             project_name=args.project_name or None,
             force=args.force,
             note_language=args.note_language,
+            flat_project_root=flat_path,
         )
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return
