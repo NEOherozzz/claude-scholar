@@ -5,7 +5,9 @@ description: Use this as the main Claude Scholar skill for a vault-first, projec
 
 # Obsidian Project KB Core
 
-This is the **main workflow authority** for project-scoped Obsidian knowledge maintenance.
+This is the **main workflow authority** for project-scoped Obsidian knowledge maintenance: bootstrap, repo<->vault binding, registry, hub/plan/index, lifecycle, and synthesis.
+
+> **Vault I/O delegation:** for the *actual* reading and writing of vault content -- PARA/theme notes, periodic notes (daily/weekly/monthly), tasks, and search -- prefer the `anthropic-skills:lifeos` skill. It is config-aware about the user's real PARA folders and periodic-note formats, so it lands content where the user expects. This skill owns the project-binding layer; let `anthropic-skills:lifeos` be the vault I/O layer it delegates to. Reference it by skill name, never by an absolute vault path (the vault differs per machine).
 
 Default project root:
 

@@ -174,6 +174,10 @@ Workflow boundary:
 - no mandatory Obsidian MCP,
 - no extra API key requirement,
 - should remain usable even when operating only on the filesystem.
+Vault I/O delegation:
+- the research-project binding layer (registry, repo<->vault binding, scaffold, index, synthesis) stays with `obsidian-project-kb-core`,
+- but actual reads/writes against LifeOS vault content (PARA/theme notes, periodic notes, tasks, search, AI Wiki) should prefer the `anthropic-skills:lifeos` skill, which is config-aware about the user's real PARA layout and periodic-note formats,
+- refer to that skill by name (`anthropic-skills:lifeos`), never by an absolute vault path, so the rule stays valid across the user's machines.
 
 ---
 ## Naming Conventions

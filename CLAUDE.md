@@ -107,7 +107,8 @@ Use the matching local skill or workflow when the task clearly fits:
 - Post-experiment reporting or retrospective summaries -> `results-report`
 - Paper drafting or academic writing -> `ml-paper-writing`
 - Reviewer response or rebuttal writing -> `review-response`
-- Bound research repo knowledge maintenance -> `obsidian-project-kb-core`
+- Reading or writing the LifeOS Obsidian vault's own content (PARA/theme notes, periodic notes, tasks, search) -> prefer the `anthropic-skills:lifeos` skill
+- Research-project binding/registry/synthesis on top of that vault -> `obsidian-project-kb-core` (delegate the actual vault reads/writes to `anthropic-skills:lifeos`)
 
 For coding, debugging, architecture, review, and verification tasks, prefer the matching development skill instead of improvising.
 
@@ -115,7 +116,9 @@ For coding, debugging, architecture, review, and verification tasks, prefer the 
 
 ## Bound Repo / Obsidian Rule
 
-If the current repository is bound to an Obsidian project knowledge base, treat `obsidian-project-kb-core` as the default durable knowledge path.
+If the current repository is bound to an Obsidian project knowledge base, treat `obsidian-project-kb-core` as the default durable knowledge path for the research-project binding layer (registry, repo<->vault binding, project-scoped scaffold, index, synthesis).
+
+For actual reads and writes against the LifeOS vault itself -- PARA/theme notes, periodic notes (daily/weekly/monthly), tasks, search -- prefer the `anthropic-skills:lifeos` skill, which is config-aware about the user's real PARA folders and periodic-note formats. Treat it as the vault I/O layer that `obsidian-project-kb-core` delegates to. Refer to it by skill name, never by an absolute vault path (the vault lives at different paths on different machines).
 
 - Prefer updating existing canonical notes.
 - Keep write-back lightweight by default.
