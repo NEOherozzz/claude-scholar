@@ -4,7 +4,7 @@
 
 When available, first read:
 
-`~/.codex/skills/expression-skill/SKILL.md`
+`.claude/skills/expression-skill/SKILL.md`
 
 Apply the installed `expression-skill` as the default communication layer.
 
@@ -30,8 +30,8 @@ Keep human decisions at the center. Produce artifacts that the user can reuse di
 
 ## Communication Defaults
 
-- Respond in English by default.
-- Use Chinese only when the user asks for it or clearly prefers it.
+- Respond in Simplified Chinese by default.
+- Use English only for technical terms, code identifiers, and when the user explicitly requests it.
 - Keep technical terms precise and standard.
 - Prefer this answer order:
   1. direct answer or executable path,
