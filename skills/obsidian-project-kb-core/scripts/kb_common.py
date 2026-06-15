@@ -6,6 +6,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -119,6 +120,62 @@ def expand_path(value: str) -> Path:
             'Set the referenced variable (e.g. LIFEOS_ROOT) in this machine environment.'
         )
     return Path(expanded).expanduser()
+
+
+def _portable_root_vars() -> list[str]:
+    """Env-var names whose values may prefix configured paths, most specific first.
+
+    Configurable via KB_PORTABLE_ROOT_VARS (comma-separated); defaults to LIFEOS_ROOT.
+    """
+    raw = os.environ.get('KB_PORTABLE_ROOT_VARS', 'LIFEOS_ROOT')
+    return [name.strip() for name in raw.split(',') if name.strip()]
+
+
+def to_portable(path: Path) -> str | None:
+    """Inverse of expand_path: if `path` lives under the value of a known root var,
+    return a '$VAR/rel' string so the written registry stays machine-independent.
+
+    Returns None when no configured variable matches, leaving the caller to choose a
+    fallback (an absolute path, or '.').
+    """
+    resolved = path.expanduser().resolve()
+    for name in _portable_root_vars():
+        value = os.environ.get(name)
+        if not value:
+            continue
+        try:
+            rel = resolved.relative_to(Path(value).expanduser().resolve())
+        except ValueError:
+            continue
+        rel_str = rel.as_posix()
+        return f'${name}' if rel_str in ('', '.') else f'${name}/{rel_str}'
+    return None
+
+
+def portable_repo_root(repo_root: Path) -> str:
+    """repo_roots entry: a root var when one matches, else '.'.
+
+    '.' keeps the entry machine-independent for synced repos (resolved against the CWD
+    at detect time, which is the repo root in normal use).
+    """
+    return to_portable(repo_root) or '.'
+
+
+def portable_vault_path(path: Path) -> str:
+    """Vault path for the registry: a root var when one matches, else the absolute path
+    plus a stderr warning (absolute paths do not survive syncing across machines).
+    """
+    portable = to_portable(path)
+    if portable is not None:
+        return portable
+    resolved = str(path.expanduser().resolve())
+    print(
+        f'[kb][warn] No portable root variable matched {resolved!r}; wrote an absolute '
+        f'path. Set one of {_portable_root_vars()} (or KB_PORTABLE_ROOT_VARS) so the '
+        'registry stays machine-independent across synced machines.',
+        file=sys.stderr,
+    )
+    return resolved
 
 
 def binding_registry_path(repo_root: Path) -> Path:
@@ -390,9 +447,9 @@ def bootstrap_binding(repo_root: Path, vault_path: Path, project_name: str | Non
     entry: dict[str, Any] = {
         'project_id': project_slug,
         'project_slug': project_slug,
-        'repo_roots': [str(repo_root.resolve())],
+        'repo_roots': [portable_repo_root(repo_root)],
         'vault_name': os.environ.get('OBSIDIAN_VAULT_NAME', vault_path.name),
-        'vault_root': str(project_root),
+        'vault_root': portable_vault_path(project_root),
         'hub_note': relative_note_path(project_root / '00-Hub.md', vault_path),
         'status': 'active',
         'auto_sync': True,
@@ -400,7 +457,7 @@ def bootstrap_binding(repo_root: Path, vault_path: Path, project_name: str | Non
         'updated_at': now_iso(),
     }
     if flat_project_root is not None:
-        entry['vault_path'] = str(vault_path)
+        entry['vault_path'] = portable_vault_path(vault_path)
         entry['flat_layout'] = True
     registry['projects'][project_slug] = entry
     save_binding_registry(reg_path, registry)
